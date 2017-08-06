@@ -26,14 +26,14 @@ import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 import com.okta.jwt.impl.NimbusJwtVerifier;
-import org.apache.commons.lang3.StringUtils;
+import com.okta.jwt.impl.OktaJWTClaimsVerifier;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-public class JwtHelper {
+public final class JwtHelper {
 
     private String issuerUrl;
     private String clientOrAudience;
@@ -57,12 +57,12 @@ public class JwtHelper {
 
     public JwtVerifier build() throws IOException, ParseException {
 
-        assert StringUtils.isEmpty(issuerUrl) : "IssuerUrl cannot be empty";
-        assert StringUtils.isEmpty(clientOrAudience) : "ClientId/Audience cannot be empty";
+        notEmpty(issuerUrl, "IssuerUrl cannot be empty");
+        notEmpty(clientOrAudience, "ClientId/Audience cannot be empty");
 
         URL providerConfigurationURL = URI.create(issuerUrl + "/").resolve(".well-known/openid-configuration").toURL();
 
-        String metadata = IOUtils.readInputStreamToString(providerConfigurationURL.openStream(), StandardCharsets.UTF_8);
+        String metadata = readMetadataFromUrl(providerConfigurationURL);
         OIDCProviderMetadata providerMetadata = OIDCProviderMetadata.parse(metadata);
 
         // Keys URI from discovery
@@ -85,8 +85,27 @@ public class JwtHelper {
         // RSA keys sourced from the JWK set URL
         JWSKeySelector keySelector = new JWSVerificationKeySelector(expectedJWSAlg, keySource);
         jwtProcessor.setJWSKeySelector(keySelector);
+        jwtProcessor.setJWTClaimsSetVerifier(new OktaJWTClaimsVerifier(issuerUrl, clientOrAudience));
 
-        return new NimbusJwtVerifier(issuerUrl, clientOrAudience, jwtProcessor);
+        return new NimbusJwtVerifier(jwtProcessor);
     }
+
+    /**
+     * Exposed for help testing only. The actual implementation just uses Nimbus's IOUtils.
+     * @param url .well-known metadata url
+     * @return String content of the URL
+     * @throws IOException if there is a problem opening the URL stream.
+     */
+    String readMetadataFromUrl(URL url) throws IOException {
+        return IOUtils.readInputStreamToString(url.openStream(), StandardCharsets.UTF_8);
+    }
+
+    private void notEmpty(String value, String message) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+
 
 }

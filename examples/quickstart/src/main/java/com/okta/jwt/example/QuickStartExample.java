@@ -24,7 +24,7 @@ public class QuickStartExample {
     public static void main(String[] args) throws Exception {
 
         if (args == null || args.length != 3) {
-            System.err.println("Usage: "+ QuickStartExample.class.getName() +" [issuerUrl] [clientId] [jwtString]");
+            System.err.println("Usage: "+ QuickStartExample.class.getName() +" [issuerUrl] [clientId] [jwtAccessToken]");
             System.exit(1);
         }
 
