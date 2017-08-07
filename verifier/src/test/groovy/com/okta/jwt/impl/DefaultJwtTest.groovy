@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okta.jwt
+package com.okta.jwt.impl
 
+import com.okta.jwt.Jwt
+import com.okta.jwt.TestSupport
 import com.okta.jwt.impl.DefaultJwt
 import org.testng.annotations.Test
 

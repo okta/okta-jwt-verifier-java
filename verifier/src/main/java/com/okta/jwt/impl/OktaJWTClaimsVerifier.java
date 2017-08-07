@@ -38,6 +38,8 @@ public class OktaJWTClaimsVerifier<C extends SecurityContext> extends DefaultJWT
     @Override
     public void verify(JWTClaimsSet jwt, C context) throws BadJWTException {
 
+        Assert.notNull(jwt, "JWTClaimsSet cannot be null");
+
         // validate expire / not before time
         super.verify(jwt, context);
 
