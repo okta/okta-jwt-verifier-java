@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okta.jwt
+package com.okta.jwt.impl
 
 import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JWSAlgorithm
@@ -29,8 +29,9 @@ import com.nimbusds.jose.proc.JWSVerificationKeySelector
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
-import com.okta.jwt.impl.NimbusJwtVerifier
-import com.okta.jwt.impl.OktaJWTClaimsVerifier
+import com.okta.jwt.JoseException
+import com.okta.jwt.JwtVerifier
+import com.okta.jwt.TestSupport
 import org.testng.annotations.Test
 
 import java.security.KeyPair
