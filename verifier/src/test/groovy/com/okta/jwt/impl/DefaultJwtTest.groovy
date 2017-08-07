@@ -16,8 +16,6 @@
 package com.okta.jwt.impl
 
 import com.okta.jwt.Jwt
-import com.okta.jwt.TestSupport
-import com.okta.jwt.impl.DefaultJwt
 import org.testng.annotations.Test
 
 import java.time.Instant
@@ -63,8 +61,5 @@ class DefaultJwtTest {
         expect(IllegalArgumentException) {
             new DefaultJwt(null, issuedAt, expiresAt, claims)
         }
-
-
     }
-
 }

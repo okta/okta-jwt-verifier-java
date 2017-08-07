@@ -105,7 +105,4 @@ public final class JwtHelper {
             throw new IllegalArgumentException(message);
         }
     }
-
-
-
 }
