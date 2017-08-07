@@ -30,15 +30,11 @@
     <name>Okta JWT Verifier :: Examples :: Quick Start</name>
 
     <dependencies>
-
         <dependency>
             <groupId>com.okta.jwt</groupId>
             <artifactId>okta-jwt-verifier</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
-
-
-        <!-- Logging -->
         <dependency>
             <!-- Required for any libraries that expect to call the commons logging APIs -->
             <groupId>org.slf4j</groupId>
@@ -50,7 +46,6 @@
             <artifactId>logback-classic</artifactId>
             <scope>runtime</scope>
         </dependency>
-
     </dependencies>
 
     <build>

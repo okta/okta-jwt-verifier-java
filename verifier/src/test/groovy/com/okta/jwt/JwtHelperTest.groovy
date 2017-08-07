@@ -15,15 +15,11 @@
  */
 package com.okta.jwt
 
-import com.nimbusds.jose.util.IOUtils
 import com.okta.jwt.impl.NimbusJwtVerifier
 import com.okta.jwt.impl.OktaJWTClaimsVerifier
-import org.mockito.Mockito
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.testng.annotations.Test
-
-import java.nio.charset.StandardCharsets
 
 import static com.okta.jwt.TestSupport.*
 
@@ -75,9 +71,7 @@ class JwtHelperTest {
                 instanceOf(OktaJWTClaimsVerifier)
         ))
 
-
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().clientOrAudience, equalTo("my_audience"))
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().issuer, equalTo("http://example.com/issuer"))
-
     }
 }

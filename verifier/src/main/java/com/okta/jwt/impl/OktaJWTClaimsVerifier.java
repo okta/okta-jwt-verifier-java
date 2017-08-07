@@ -23,7 +23,9 @@ import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import java.util.Collection;
 import java.util.Map;
 
-import static com.okta.jwt.impl.NimbusJwtVerifier.*;
+import static com.okta.jwt.impl.NimbusJwtVerifier.TOKEN_TYPE_KEY;
+import static com.okta.jwt.impl.NimbusJwtVerifier.TOKEN_TYPE_ACCESS;
+import static com.okta.jwt.impl.NimbusJwtVerifier.TOKEN_TYPE_ID;
 
 public class OktaJWTClaimsVerifier<C extends SecurityContext> extends DefaultJWTClaimsVerifier<C> {
 
@@ -67,8 +69,7 @@ public class OktaJWTClaimsVerifier<C extends SecurityContext> extends DefaultJWT
         if (TOKEN_TYPE_ID.equals(tokenType)) {
             clientIdClaim = "aud";
             clientId = jwt.getAudience();
-        }
-        else {
+        } else {
             clientIdClaim = "cid";
             clientId = jwt.getClaims().get(clientIdClaim);
         }
@@ -79,8 +80,7 @@ public class OktaJWTClaimsVerifier<C extends SecurityContext> extends DefaultJWT
                 throw new BadJWTException(String.format("Failed to validate jwt string, invalid clientId/audience " +
                         "claim '%s', expected '%s', found '%s'", clientIdClaim, clientOrAudience, clientId));
             }
-        }
-        else if (!clientOrAudience.equals(clientId)) {
+        } else if (!clientOrAudience.equals(clientId)) {
             throw new BadJWTException(String.format("Failed to validate jwt string, invalid clientId/audience " +
                     "claim '%s', expected '%s', found '%s'", clientIdClaim, clientOrAudience, clientId));
         }

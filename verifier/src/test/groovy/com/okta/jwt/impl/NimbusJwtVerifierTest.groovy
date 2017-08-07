@@ -31,7 +31,6 @@ import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
 import com.okta.jwt.JoseException
 import com.okta.jwt.JwtVerifier
-import com.okta.jwt.TestSupport
 import org.testng.annotations.Test
 
 import java.security.KeyPair

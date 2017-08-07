@@ -184,5 +184,4 @@ class OktaJWTClaimsVerifierTest {
             verifier.verify(claimsSetId, idTokenContext)
         }
     }
-
 }
