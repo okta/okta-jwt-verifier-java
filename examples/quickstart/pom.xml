@@ -22,7 +22,7 @@
 
     <parent>
         <groupId>com.okta.jwt.examples</groupId>
-        <artifactId>okta-spring-security-examples</artifactId>
+        <artifactId>okta-jwt-verifier-examples</artifactId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
 
