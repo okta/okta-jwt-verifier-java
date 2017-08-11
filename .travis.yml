@@ -10,7 +10,7 @@ before_install:
 script:
 - "./src/ci/build.sh"
 after_success:
-  - bash <(curl -s https://codecov.io/bash) -f verifier/target/jacoco.exec
+  - bash <(curl -s https://codecov.io/bash) -f verifier/target/site/jacoco/jacoco.xml
 
 deploy:
   - provider: pages
