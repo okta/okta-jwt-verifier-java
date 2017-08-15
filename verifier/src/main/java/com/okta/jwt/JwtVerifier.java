@@ -17,7 +17,7 @@ package com.okta.jwt;
 
 public interface JwtVerifier {
 
-    Jwt decodeIdToken(String jwtString) throws JoseException;
+    Jwt decodeIdToken(String jwtString, String nonce) throws JoseException;
 
     Jwt decodeAccessToken(String jwtString) throws JoseException;
 }

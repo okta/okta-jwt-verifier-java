@@ -36,7 +36,8 @@ import java.nio.charset.StandardCharsets;
 public final class JwtHelper {
 
     private String issuerUrl;
-    private String clientOrAudience;
+    private String audience = "api://default";
+    private String clientId;
 
     public JwtHelper setIssuerUrl(String issuerUrl) {
 
@@ -50,15 +51,20 @@ public final class JwtHelper {
         return this;
     }
 
-    public JwtHelper setClientOrAudience(String clientOrAudience) {
-        this.clientOrAudience = clientOrAudience;
+    public JwtHelper setAudience(String audience) {
+        this.audience = audience;
+        return this;
+    }
+
+    public JwtHelper setClientId(String clientId) {
+        this.clientId = clientId;
         return this;
     }
 
     public JwtVerifier build() throws IOException, ParseException {
 
         notEmpty(issuerUrl, "IssuerUrl cannot be empty");
-        notEmpty(clientOrAudience, "ClientId/Audience cannot be empty");
+        notEmpty(audience, "Audience cannot be empty");
 
         URL providerConfigurationURL = URI.create(issuerUrl + "/").resolve(".well-known/openid-configuration").toURL();
 
@@ -85,7 +91,7 @@ public final class JwtHelper {
         // RSA keys sourced from the JWK set URL
         JWSKeySelector keySelector = new JWSVerificationKeySelector(expectedJWSAlg, keySource);
         jwtProcessor.setJWSKeySelector(keySelector);
-        jwtProcessor.setJWTClaimsSetVerifier(new OktaJWTClaimsVerifier(issuerUrl, clientOrAudience));
+        jwtProcessor.setJWTClaimsSetVerifier(new OktaJWTClaimsVerifier(issuerUrl, audience, clientId));
 
         return new NimbusJwtVerifier(jwtProcessor);
     }

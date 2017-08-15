@@ -8,7 +8,7 @@ Tokens will be validated for:
 * Expiration
 * Signature
 * Valid issuer
-* Valid Client/Audience
+* Valid Audience
 
 Basic usage:
 
@@ -16,7 +16,7 @@ Basic usage:
 // 1. build the parser
 JwtVerifier jwtVerifier = new JwtHelper()
                             .setIssuerUrl("https://dev-123456.oktapreview.com/oauth2/ausar5cbq5TRooicu812")
-                            .setClientOrAudience("my-audience")
+                            .setAudience("my-audience")
                             .build();
 
 // 2. Process the token (includes validation)

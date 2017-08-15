@@ -42,22 +42,23 @@ class JwtHelperTest {
             }
         }).when(helper).readMetadataFromUrl(any(URL))
 
+        helper.setClientId("clientId")
         expect(IllegalArgumentException) {
             helper.build()
         }
 
-        helper.setClientOrAudience("my_audience")
+        helper.setAudience("my_audience")
         expect(IllegalArgumentException) {
             helper.build()
         }
 
-        helper.setClientOrAudience(null)
+        helper.setAudience(null)
         helper.setIssuerUrl("http://example.com/issuer")
         expect(IllegalArgumentException) {
             helper.build()
         }
 
-        helper.setClientOrAudience("my_audience")
+        helper.setAudience("my_audience")
         helper.setIssuerUrl("http://example.com/issuer")
         JwtVerifier verifier = helper.build()
 
@@ -71,7 +72,8 @@ class JwtHelperTest {
                 instanceOf(OktaJWTClaimsVerifier)
         ))
 
-        assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().clientOrAudience, equalTo("my_audience"))
+        assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().audience, equalTo("my_audience"))
+        assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().clientId, equalTo("clientId"))
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().issuer, equalTo("http://example.com/issuer"))
     }
 }
