@@ -20,12 +20,12 @@ import com.nimbusds.jose.proc.SimpleSecurityContext
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.proc.BadJWTException
 import com.okta.jwt.JoseException
-import com.okta.jwt.JwtVerifier
-import com.okta.jwt.TestSupport
 import org.testng.annotations.Test
 
 import java.security.NoSuchAlgorithmException
 import java.time.Instant
+import static com.okta.jwt.TestSupport.*
+import static org.hamcrest.Matchers.*
 
 class OktaJWTClaimsVerifierTest {
 
@@ -55,22 +55,36 @@ class OktaJWTClaimsVerifierTest {
     void basicAccessTokenDecodeTest() {
 
         JWTClaimsSet claimsSet = new JWTClaimsSet(basicValidClaims + [
-                cid: "my_audience",
+                aud: ["my_audience"],
                 iss: "https//example.com/issuer"
         ])
 
-        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience")
+        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", "my_clientId")
         verifier.verify(claimsSet, null)
     }
+
     @Test
-    void basicIdTokenDecodeTest() {
+    void missingTokenTypeInContextDecodeTest() {
 
         JWTClaimsSet claimsSet = new JWTClaimsSet(basicValidClaims + [
                 aud: ["my_audience"],
                 iss: "https//example.com/issuer"
         ])
 
-        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience")
+        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", "my_clientId")
+        verifier.verify(claimsSet, new SimpleSecurityContext())
+    }
+
+    @Test
+    void basicIdTokenDecodeTest() {
+
+        JWTClaimsSet claimsSet = new JWTClaimsSet(basicValidClaims + [
+                aud: ["my_clientId"],
+                iss: "https//example.com/issuer",
+                sub: "joe.coder@exapmle.com"
+        ])
+
+        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", "my_clientId")
         verifier.verify(claimsSet, idTokenContext)
     }
 
@@ -78,13 +92,13 @@ class OktaJWTClaimsVerifierTest {
     @Test
     void testNullToken() throws NoSuchAlgorithmException, JOSEException, JoseException {
 
-        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience")
+        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", "my_clientId")
 
-        TestSupport.expect(IllegalArgumentException) {
+        expect(IllegalArgumentException) {
             verifier.verify(null, null)
         }
 
-        TestSupport.expect(IllegalArgumentException) {
+        expect(IllegalArgumentException) {
             verifier.verify(null, null)
         }
     }
@@ -92,14 +106,14 @@ class OktaJWTClaimsVerifierTest {
     @Test
     void testExpiredToken() throws NoSuchAlgorithmException, JOSEException, JoseException {
 
-        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience")
+        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", "my_clientId")
 
         JWTClaimsSet claimsSetAccess = new JWTClaimsSet(basicExpiredClaims + [
                 cid: "testClient",
                 iss: "testIssuer"
         ])
 
-        TestSupport.expect(BadJWTException) {
+        expect(BadJWTException) {
             verifier.verify(claimsSetAccess, accessTokenContext)
         }
 
@@ -108,7 +122,7 @@ class OktaJWTClaimsVerifierTest {
                 iss: "testIssuer"
         ])
 
-        TestSupport.expect(BadJWTException) {
+        expect(BadJWTException) {
             verifier.verify(claimsSetId, idTokenContext)
         }
     }
@@ -116,14 +130,14 @@ class OktaJWTClaimsVerifierTest {
     @Test
     void testCreatedFuture() throws NoSuchAlgorithmException, JOSEException, JoseException {
 
-        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience")
+        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", "my_clientId")
 
         JWTClaimsSet claimsSetAccess = new JWTClaimsSet(basicFutureClaims + [
                 cid: "testClient",
                 iss: "testIssuer"
         ])
 
-        TestSupport.expect(BadJWTException) {
+        expect(BadJWTException) {
             verifier.verify(claimsSetAccess, accessTokenContext)
         }
 
@@ -132,7 +146,7 @@ class OktaJWTClaimsVerifierTest {
                 iss: "testIssuer"
         ])
 
-        TestSupport.expect(BadJWTException) {
+        expect(BadJWTException) {
             verifier.verify(claimsSetId, idTokenContext)
         }
     }
@@ -140,14 +154,14 @@ class OktaJWTClaimsVerifierTest {
     @Test
     void testInvalidClient() throws NoSuchAlgorithmException, JOSEException, JoseException {
 
-        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience")
+        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", "my_clientId")
 
         JWTClaimsSet claimsSetAccess = new JWTClaimsSet(basicValidClaims + [
                 cid: "invalid_testClient",
                 iss: "testIssuer"
         ])
 
-        TestSupport.expect(BadJWTException) {
+        expect(BadJWTException) {
             verifier.verify(claimsSetAccess, accessTokenContext)
         }
 
@@ -156,22 +170,32 @@ class OktaJWTClaimsVerifierTest {
                 iss: "testIssuer"
         ])
 
-        TestSupport.expect(BadJWTException) {
+        expect(BadJWTException) {
             verifier.verify(claimsSetId, idTokenContext)
         }
+
+        claimsSetId = new JWTClaimsSet(basicValidClaims + [
+                aud: [],
+                iss: "testIssuer"
+        ])
+
+        expect(BadJWTException) {
+            verifier.verify(claimsSetId, idTokenContext)
+        }
+
     }
 
     @Test
     void testInvalidIssuer() throws NoSuchAlgorithmException, JOSEException, JoseException {
 
-        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience")
+        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", "my_clientId")
 
         JWTClaimsSet claimsSetAccess = new JWTClaimsSet(basicValidClaims + [
                 cid: "testClient",
                 iss: "invalid_testIssuer"
         ])
 
-        TestSupport.expect(BadJWTException) {
+        expect(BadJWTException) {
             verifier.verify(claimsSetAccess, accessTokenContext)
         }
 
@@ -180,8 +204,51 @@ class OktaJWTClaimsVerifierTest {
                 iss: "invalid_testIssuer"
         ])
 
-        TestSupport.expect(BadJWTException) {
+        expect(BadJWTException) {
             verifier.verify(claimsSetId, idTokenContext)
+        }
+    }
+
+    @Test
+    void IdTokenDecodeNoSubjectTest() {
+
+        JWTClaimsSet claimsSet = new JWTClaimsSet(basicValidClaims + [
+                aud: ["my_clientId"],
+                iss: "https//example.com/issuer"
+        ])
+
+        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", "my_clientId")
+        expect(BadJWTException) {
+            verifier.verify(claimsSet, idTokenContext)
+        }
+    }
+
+    @Test
+    void IdTokenDecodeNonceTest() {
+        JWTClaimsSet claimsSet = new JWTClaimsSet(basicValidClaims + [
+                aud: ["my_clientId"],
+                iss: "https//example.com/issuer",
+                sub: "joe.coder@example.com",
+                nonce: "invalid_nonce"
+        ])
+
+        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", "my_clientId")
+        expect(BadJWTException, startsWith("Invalid nonce found in ID Token")) {
+            verifier.verify(claimsSet, idTokenContext + [nonce: "a_nonce"])
+        }
+    }
+
+    @Test
+    void invalidTokenTypeTest() {
+        JWTClaimsSet claimsSet = new JWTClaimsSet(basicValidClaims + [
+                aud: ["my_clientId"],
+                iss: "https//example.com/issuer",
+                sub: "joe.coder@example.com"
+        ])
+
+        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", "my_clientId")
+        expect(BadJWTException) {
+            verifier.verify(claimsSet, new SimpleSecurityContext() + [token_type: 'unknown'])
         }
     }
 }

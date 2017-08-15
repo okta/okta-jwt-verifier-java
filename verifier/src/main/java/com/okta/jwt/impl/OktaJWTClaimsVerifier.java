@@ -19,10 +19,12 @@ import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.BadJWTException;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
+import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
+import static com.okta.jwt.impl.NimbusJwtVerifier.NONCE_KEY;
 import static com.okta.jwt.impl.NimbusJwtVerifier.TOKEN_TYPE_KEY;
 import static com.okta.jwt.impl.NimbusJwtVerifier.TOKEN_TYPE_ACCESS;
 import static com.okta.jwt.impl.NimbusJwtVerifier.TOKEN_TYPE_ID;
@@ -30,11 +32,13 @@ import static com.okta.jwt.impl.NimbusJwtVerifier.TOKEN_TYPE_ID;
 public class OktaJWTClaimsVerifier<C extends SecurityContext> extends DefaultJWTClaimsVerifier<C> {
 
     private final String issuer;
-    private final String clientOrAudience;
+    private final String audience;
+    private final String clientId;
 
-    public OktaJWTClaimsVerifier(String issuer, String clientOrAudience) {
+    public OktaJWTClaimsVerifier(String issuer, String audience, String clientId) {
         this.issuer = issuer;
-        this.clientOrAudience = clientOrAudience;
+        this.audience = audience;
+        this.clientId = clientId;
     }
 
     @Override
@@ -47,12 +51,17 @@ public class OktaJWTClaimsVerifier<C extends SecurityContext> extends DefaultJWT
 
         // access_token by default
         String tokenType = TOKEN_TYPE_ACCESS;
+        String nonce = null;
 
         if (context instanceof Map) {
-            Object value = ((Map) context).get(TOKEN_TYPE_KEY);
+            Map contextMap = ((Map) context);
+
+            Object value = contextMap.get(TOKEN_TYPE_KEY);
             if (value != null) {
                 tokenType = value.toString();
             }
+
+            nonce = (String) contextMap.get(NONCE_KEY);
         }
 
         // validate issuer
@@ -62,27 +71,44 @@ public class OktaJWTClaimsVerifier<C extends SecurityContext> extends DefaultJWT
                     "expected '%s', found '%s'", issuer, claimIssuer));
         }
 
-        // validate audience
-        Object clientId;
-        String clientIdClaim;
-
-        if (TOKEN_TYPE_ID.equals(tokenType)) {
-            clientIdClaim = "aud";
-            clientId = jwt.getAudience();
-        } else {
-            clientIdClaim = "cid";
-            clientId = jwt.getClaims().get(clientIdClaim);
+        // Access Token Validation
+        if (TOKEN_TYPE_ACCESS.equals(tokenType)) {
+            List<String> resolvedAudience = jwt.getAudience();
+            // the expected audience MUST be in this list
+            if (CollectionUtils.isEmpty(resolvedAudience) || !resolvedAudience.contains(audience)) {
+                throw new BadJWTException(String.format("Failed to validate jwt string, invalid audience " +
+                        "claim 'aud', expected '%s', but found '%s'", audience, resolvedAudience));
+            }
         }
 
-        if (clientId instanceof Collection) {
-            Collection clientIdCollection = (Collection) clientId;
-            if (!clientIdCollection.contains(clientOrAudience)) {
-                throw new BadJWTException(String.format("Failed to validate jwt string, invalid clientId/audience " +
-                        "claim '%s', expected '%s', found '%s'", clientIdClaim, clientOrAudience, clientId));
+        // ID Token Validation
+        else if (TOKEN_TYPE_ID.equals(tokenType)) {
+
+            Assert.notNull(clientId, "An OAuth clientId must be specified when validating ID Tokens.");
+
+            List<String> resolvedAudience = jwt.getAudience();
+            // the expected audience MUST be in this list
+            if (CollectionUtils.isEmpty(resolvedAudience) || !resolvedAudience.contains(clientId)) {
+                throw new BadJWTException(String.format("Failed to validate jwt string, invalid clientId found in " +
+                        "claim 'aud', expected '%s', but found '%s'", clientId, resolvedAudience));
             }
-        } else if (!clientOrAudience.equals(clientId)) {
-            throw new BadJWTException(String.format("Failed to validate jwt string, invalid clientId/audience " +
-                    "claim '%s', expected '%s', found '%s'", clientIdClaim, clientOrAudience, clientId));
+
+            // validate nonce
+            Object resolvedNonce = jwt.getClaim("nonce");
+            if ( nonce != null && !nonce.equals(resolvedNonce)) {
+                throw new BadJWTException(String.format("Invalid nonce found in ID Token, expected '%s', but found '%s'", nonce, resolvedNonce));
+            }
+
+            String subject = jwt.getSubject();
+            if (subject == null) {
+                throw new BadJWTException("Invalid ID Token, missing subject claim ('sub')");
+            }
+
+        }
+
+        // Unknown Token Type
+        else {
+            throw new BadJWTException(String.format("Unknown token type: '%s'", tokenType));
         }
     }
 }

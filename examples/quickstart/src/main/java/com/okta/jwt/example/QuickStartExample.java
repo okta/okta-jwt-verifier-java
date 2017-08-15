@@ -24,19 +24,19 @@ public class QuickStartExample {
     public static void main(String[] args) throws Exception {
 
         if (args == null || args.length != 3) {
-            System.err.println("Usage: "+ QuickStartExample.class.getName() +" [issuerUrl] [clientId] [jwtAccessToken]");
+            System.err.println("Usage: "+ QuickStartExample.class.getName() +" [issuerUrl] [audience] [jwtAccessToken]");
             System.exit(1);
         }
 
         String issuerUrl = args[0];
-        String clientId  = args[1];
+        String audience  = args[1];
         String jwtString = args[2];
 
 
         // 1. build the parser
         JwtVerifier jwtVerifier = new JwtHelper()
                                     .setIssuerUrl(issuerUrl)
-                                    .setClientOrAudience(clientId)
+                                    .setAudience(audience)
                                     .build();
 
         // 2. Process the token (includes validation)

@@ -45,20 +45,39 @@ class NimbusJwtVerifierTest {
     private int clockSkewOffset = 65 * 1000 // default skew is 60 seconds
 
     @Test
-    void testValidToken() throws NoSuchAlgorithmException, JOSEException, JoseException {
+    void testValidAccessToken() throws NoSuchAlgorithmException, JOSEException, JoseException {
 
-        SignedJwtTestStructure testStructure = new SignedJwtTestStructure("testIssuer1", "testClient1", new Date(), new Date(System.currentTimeMillis() + 10000), "testIssuer1", "testClient1")
+        SignedJwtTestStructure testStructure = new SignedJwtTestStructure("testIssuer1", "testAudience1", "testClient1", null, new Date(), new Date(System.currentTimeMillis() + 10000), "testIssuer1", "testAudience1")
 
         JwtVerifier verifier = new NimbusJwtVerifier(testStructure.jwtProcessor)
 
         verifier.decodeAccessToken(testStructure.jwtAccessToken)
-        verifier.decodeIdToken(testStructure.jwtIdToken)
+    }
+
+    @Test
+    void testValidIdTokenNoNonce() throws NoSuchAlgorithmException, JOSEException, JoseException {
+
+        SignedJwtTestStructure testStructure = new SignedJwtTestStructure("testIssuer1", "testAudience1", "testClient1", null, new Date(), new Date(System.currentTimeMillis() + 10000), "testIssuer1", "testClient1")
+
+        JwtVerifier verifier = new NimbusJwtVerifier(testStructure.jwtProcessor)
+
+        verifier.decodeIdToken(testStructure.jwtIdToken, testStructure.nonce)
+    }
+
+    @Test
+    void testValidIdTokenWithNonce() throws NoSuchAlgorithmException, JOSEException, JoseException {
+
+        SignedJwtTestStructure testStructure = new SignedJwtTestStructure("testIssuer1", "testAudience1", "testClient1", "nonce1", new Date(), new Date(System.currentTimeMillis() + 10000), "testIssuer1", "testClient1", "nonce1")
+
+        JwtVerifier verifier = new NimbusJwtVerifier(testStructure.jwtProcessor)
+
+        verifier.decodeIdToken(testStructure.jwtIdToken, testStructure.nonce)
     }
 
     @Test
     void testNullToken() throws NoSuchAlgorithmException, JOSEException, JoseException {
 
-        SignedJwtTestStructure testStructure = new SignedJwtTestStructure("testIssuer1", "testClient1", new Date(), new Date(System.currentTimeMillis() + 10000), "testIssuer1", "testClient1")
+        SignedJwtTestStructure testStructure = new SignedJwtTestStructure("testIssuer1", "testAudience1", "testClient1", null, new Date(), new Date(System.currentTimeMillis() + 10000), "testIssuer1", "testAudience1")
 
         JwtVerifier verifier = new NimbusJwtVerifier(testStructure.jwtProcessor)
 
@@ -67,28 +86,28 @@ class NimbusJwtVerifierTest {
         }
 
         expect(IllegalArgumentException) {
-            verifier.decodeIdToken(null)
+            verifier.decodeIdToken(null, testStructure.nonce)
         }
     }
 
     @Test
     void testExpiredToken() throws NoSuchAlgorithmException, JOSEException, JoseException {
 
-        SignedJwtTestStructure testStructure = new SignedJwtTestStructure("testIssuer", "testClient", new Date(), new Date(System.currentTimeMillis() - clockSkewOffset), "testIssuer", "testClient")
+        SignedJwtTestStructure testStructure = new SignedJwtTestStructure("testIssuer", "testAudience", "testClient", null, new Date(), new Date(System.currentTimeMillis() - clockSkewOffset), "testIssuer", "testAudience")
 
         JwtVerifier verifier = new NimbusJwtVerifier(testStructure.jwtProcessor)
         expect(JoseException) {
             verifier.decodeAccessToken(testStructure.jwtAccessToken)
         }
         expect(JoseException) {
-            verifier.decodeIdToken(testStructure.jwtAccessToken)
+            verifier.decodeIdToken(testStructure.jwtAccessToken, testStructure.nonce)
         }
     }
 
     @Test
     void testCreatedFuture() throws NoSuchAlgorithmException, JOSEException, JoseException {
 
-        SignedJwtTestStructure testStructure = new SignedJwtTestStructure("testIssuer", "testClient", new Date(System.currentTimeMillis() + clockSkewOffset), new Date(), "testIssuer", "testClient")
+        SignedJwtTestStructure testStructure = new SignedJwtTestStructure("testIssuer", "testAudience", "testClient", null, new Date(System.currentTimeMillis() + clockSkewOffset), new Date(), "testIssuer", "testAudience")
 
         JwtVerifier verifier = new NimbusJwtVerifier(testStructure.jwtProcessor)
 
@@ -96,14 +115,14 @@ class NimbusJwtVerifierTest {
             verifier.decodeAccessToken(testStructure.jwtAccessToken)
         }
         expect(JoseException) {
-            verifier.decodeIdToken(testStructure.jwtAccessToken)
+            verifier.decodeIdToken(testStructure.jwtAccessToken, testStructure.nonce)
         }
     }
 
     @Test
     void testInvalidClient() throws NoSuchAlgorithmException, JOSEException, JoseException {
 
-        SignedJwtTestStructure testStructure = new SignedJwtTestStructure("testIssuer", "testClient", new Date(), new Date(System.currentTimeMillis() - 10000), "testIssuer", "wrong-client")
+        SignedJwtTestStructure testStructure = new SignedJwtTestStructure("testIssuer", "testAudience", "testClient", null, new Date(), new Date(System.currentTimeMillis() - 10000), "testIssuer",  "wrong-audience")
 
         JwtVerifier verifier = new NimbusJwtVerifier(testStructure.jwtProcessor)
 
@@ -111,14 +130,14 @@ class NimbusJwtVerifierTest {
             verifier.decodeAccessToken(testStructure.jwtAccessToken)
         }
         expect(JoseException) {
-            verifier.decodeIdToken(testStructure.jwtAccessToken)
+            verifier.decodeIdToken(testStructure.jwtAccessToken, testStructure.nonce)
         }
     }
 
     @Test
     void testInvalidIssuer() throws NoSuchAlgorithmException, JOSEException, JoseException {
 
-        SignedJwtTestStructure testStructure = new SignedJwtTestStructure("testIssuer", "testClient", new Date(), new Date(System.currentTimeMillis() - 10000), "wrong-issuer", "testClient")
+        SignedJwtTestStructure testStructure = new SignedJwtTestStructure("testIssuer", "testAudience", "testClient", null, new Date(), new Date(System.currentTimeMillis() - 10000), "wrong-issuer", "testAudience")
 
         JwtVerifier verifier = new NimbusJwtVerifier(testStructure.jwtProcessor)
 
@@ -126,14 +145,16 @@ class NimbusJwtVerifierTest {
             verifier.decodeAccessToken(testStructure.jwtAccessToken)
         }
         expect(JoseException) {
-            verifier.decodeIdToken(testStructure.jwtAccessToken)
+            verifier.decodeIdToken(testStructure.jwtAccessToken, testStructure.nonce)
         }
     }
 
     private class SignedJwtTestStructure {
 
         String issuer
+        String audience
         String client
+        String nonce
         Date issuedAt
         Date expireAt
         DefaultJWTProcessor jwtProcessor
@@ -141,25 +162,32 @@ class NimbusJwtVerifierTest {
         String jwtIdToken
 
         String jwtIssuer
-        String jwtClient
+        String jwtAudience
+        String jwtNonce
 
-        SignedJwtTestStructure(String issuer, String client, Date issuedAt, Date expireAt, String jwtIssuer=null, String jwtClient=null)
+        SignedJwtTestStructure(String issuer, String audience, String client, String nonce, Date issuedAt, Date expireAt, String jwtIssuer=null, String jwtAudience=null, String jwtNonce=null)
                 throws NoSuchAlgorithmException, JOSEException {
 
             this.issuer = issuer
+            this.audience = audience
             this.client = client
             this.issuedAt = issuedAt
             this.expireAt = expireAt
 
             this.jwtIssuer = jwtIssuer
-            this.jwtClient = jwtClient
+            this.jwtAudience = jwtAudience
+            this.nonce = nonce
 
             if (this.jwtIssuer == null) {
                 this.jwtIssuer = issuer
             }
 
-            if (this.jwtClient == null) {
-                this.jwtClient = client
+            if (this.jwtAudience == null) {
+                this.jwtAudience = audience
+            }
+
+            if (this.jwtNonce == null) {
+                this.jwtNonce = nonce
             }
 
             String kid = "123"
@@ -185,7 +213,7 @@ class NimbusJwtVerifierTest {
 
             this.jwtProcessor = new DefaultJWTProcessor()
             JWSKeySelector keySelector = new JWSVerificationKeySelector(JWSAlgorithm.RS256, immutableJWKSet)
-            jwtProcessor.setJWTClaimsSetVerifier(new OktaJWTClaimsVerifier(issuer, client))
+            jwtProcessor.setJWTClaimsSetVerifier(new OktaJWTClaimsVerifier(issuer, audience, client))
             jwtProcessor.setJWSKeySelector(keySelector)
         }
 
@@ -195,8 +223,10 @@ class NimbusJwtVerifierTest {
                     new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(kid).build(),
                     new JWTClaimsSet.Builder()
                             .issuer(this.jwtIssuer)
-                            .claim(clientClaim, this.jwtClient)
-                            .audience(this.jwtClient)
+                            .subject("joe.coder@example.com")
+                            .claim(clientClaim, this.jwtAudience)
+                            .claim("nonce", this.jwtNonce)
+                            .audience(this.jwtAudience)
                             .issueTime(issuedAt)
                             .notBeforeTime(issuedAt)
                             .expirationTime(expireAt)

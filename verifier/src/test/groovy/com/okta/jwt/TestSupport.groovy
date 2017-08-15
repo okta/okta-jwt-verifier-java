@@ -15,7 +15,9 @@
  */
 package com.okta.jwt
 
+import org.hamcrest.Matcher
 import org.testng.Assert
+import static org.hamcrest.MatcherAssert.assertThat
 
 class TestSupport {
 
@@ -29,13 +31,16 @@ class TestSupport {
         }
     }
 
-    static def expect = { Class<? extends Throwable> catchMe, Closure callMe ->
+    static def expect = { Class<? extends Throwable> catchMe, Matcher<String> messageMatcher=null, Closure callMe ->
         try {
             callMe.call()
-            Assert.fail("Expected ${catchMe.getClass().getName()} to be thrown.")
+            Assert.fail("Expected ${catchMe.getName()} to be thrown.")
         } catch(e) {
             if (!e.class.isAssignableFrom(catchMe)) {
                 throw e
+            }
+            if (messageMatcher != null) {
+                assertThat(e.getMessage(), messageMatcher)
             }
         }
     }

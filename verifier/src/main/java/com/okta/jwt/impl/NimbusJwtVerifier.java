@@ -17,6 +17,7 @@ package com.okta.jwt.impl;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.proc.BadJOSEException;
+import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jose.proc.SimpleSecurityContext;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
@@ -37,6 +38,7 @@ public class NimbusJwtVerifier implements JwtVerifier {
     static final String TOKEN_TYPE_KEY = "token_type";
     static final String TOKEN_TYPE_ACCESS = "access_token";
     static final String TOKEN_TYPE_ID = "id_token";
+    static final String NONCE_KEY = "nonce";
 
     private final ConfigurableJWTProcessor jwtProcessor;
 
@@ -46,21 +48,27 @@ public class NimbusJwtVerifier implements JwtVerifier {
     }
 
     @Override
-    public Jwt decodeIdToken(String jwtString) throws JoseException {
+    public Jwt decodeIdToken(String jwtString, String nonce) throws JoseException {
         Assert.notNull(jwtString, "JWT String cannot be null");
-        return decode(jwtString, TOKEN_TYPE_ID);
+
+        SimpleSecurityContext context = new SimpleSecurityContext();
+        context.put(TOKEN_TYPE_KEY, TOKEN_TYPE_ID);
+        context.put(NONCE_KEY, nonce);
+
+        return decode(jwtString, context);
     }
 
     @Override
     public Jwt decodeAccessToken(String jwtString) throws JoseException {
         Assert.notNull(jwtString, "JWT String cannot be null");
-        return decode(jwtString, TOKEN_TYPE_ACCESS);
-    }
-
-    private Jwt decode(String jwtString, String tokenType) throws JoseException {
 
         SimpleSecurityContext context = new SimpleSecurityContext();
-        context.put(TOKEN_TYPE_KEY, tokenType);
+        context.put(TOKEN_TYPE_KEY, TOKEN_TYPE_ACCESS);
+
+        return decode(jwtString, context);
+    }
+
+    private Jwt decode(String jwtString, SecurityContext context) throws JoseException {
 
         try {
             JWTClaimsSet claimsSet = jwtProcessor.process(jwtString, context);
