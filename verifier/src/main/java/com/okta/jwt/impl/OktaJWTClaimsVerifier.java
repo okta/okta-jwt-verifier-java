@@ -20,6 +20,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.BadJWTException;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,8 @@ import static com.okta.jwt.impl.NimbusJwtVerifier.TOKEN_TYPE_ACCESS;
 import static com.okta.jwt.impl.NimbusJwtVerifier.TOKEN_TYPE_ID;
 
 public class OktaJWTClaimsVerifier<C extends SecurityContext> extends DefaultJWTClaimsVerifier<C> {
+
+    private static final String CID_CLAIM = "cid";
 
     private final String issuer;
     private final String audience;
@@ -78,6 +81,15 @@ public class OktaJWTClaimsVerifier<C extends SecurityContext> extends DefaultJWT
             if (CollectionUtils.isEmpty(resolvedAudience) || !resolvedAudience.contains(audience)) {
                 throw new BadJWTException(String.format("Failed to validate jwt string, invalid audience " +
                         "claim 'aud', expected '%s', but found '%s'", audience, resolvedAudience));
+            }
+
+            // if an the client id is set, it must be verified
+            if (StringUtils.isNotEmpty(clientId)) {
+                Object resolvedClientId = jwt.getClaim(CID_CLAIM);
+                if (!clientId.equals(resolvedClientId)) {
+                    throw new BadJWTException(String.format("Failed to validate jwt string, invalid clientId found in " +
+                        "claim 'cid', expected '%s', but found '%s'", clientId, resolvedClientId));
+                }
             }
         }
 
