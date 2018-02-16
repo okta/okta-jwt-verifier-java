@@ -165,7 +165,15 @@ class NimbusJwtVerifierTest {
         String jwtAudience
         String jwtNonce
 
-        SignedJwtTestStructure(String issuer, String audience, String client, String nonce, Date issuedAt, Date expireAt, String jwtIssuer=null, String jwtAudience=null, String jwtNonce=null)
+        SignedJwtTestStructure(String issuer,
+                               String audience,
+                               String client,
+                               String nonce,
+                               Date issuedAt,
+                               Date expireAt,
+                               String jwtIssuer=null,
+                               String jwtAudience=null,
+                               String jwtNonce=null)
                 throws NoSuchAlgorithmException, JOSEException {
 
             this.issuer = issuer
@@ -205,8 +213,8 @@ class NimbusJwtVerifierTest {
             // Create RSA-signer with the private key
             JWSSigner signer = new RSASSASigner(privateKey)
 
-            this.jwtAccessToken = buildJwt("cid", kid, signer)
-            this.jwtIdToken = buildJwt("aud", kid, signer)
+            this.jwtAccessToken = buildAccessTokenJwt(kid, signer)
+            this.jwtIdToken = buildIDTokenJwt(kid, signer)
 
             JWKSet jwkSet = new JWKSet(new RSAKey(publicKey, KeyUse.SIGNATURE, null, JWSAlgorithm.RS256, kid, null, null, null, null, null))
             ImmutableJWKSet immutableJWKSet = new ImmutableJWKSet(jwkSet)
@@ -217,25 +225,50 @@ class NimbusJwtVerifierTest {
             jwtProcessor.setJWSKeySelector(keySelector)
         }
 
-        String buildJwt(String clientClaim, String kid, RSASSASigner signer) {
+        String buildAccessTokenJwt(String kid, RSASSASigner signer) {
 
-            SignedJWT jwtObject = new SignedJWT(
+            JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder()
+                        .issuer(this.jwtIssuer)
+                        .subject("joe.coder@example.com")
+                        .claim("nonce", this.jwtNonce)
+                        .audience(this.jwtAudience)
+                        .issueTime(issuedAt)
+                        .notBeforeTime(issuedAt)
+                        .expirationTime(expireAt)
+
+            if (client != null) {
+               builder.claim("cid", this.client)
+            }
+
+            return packageJwtBuilder(builder, kid, signer)
+        }
+
+        String buildIDTokenJwt(String kid, RSASSASigner signer) {
+            return packageJwtBuilder(
+                 new JWTClaimsSet.Builder()
+                        .issuer(this.jwtIssuer)
+                        .subject("joe.coder@example.com")
+                        .claim("cid", this.client)
+                        .claim("nonce", this.jwtNonce)
+                        .audience(this.jwtAudience)
+                        .issueTime(issuedAt)
+                        .notBeforeTime(issuedAt)
+                        .expirationTime(expireAt),
+                 kid,
+                 signer)
+        }
+
+        String packageJwtBuilder(JWTClaimsSet.Builder builder, String kid, RSASSASigner signer) {
+
+             SignedJWT jwtObject = new SignedJWT(
                     new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(kid).build(),
-                    new JWTClaimsSet.Builder()
-                            .issuer(this.jwtIssuer)
-                            .subject("joe.coder@example.com")
-                            .claim(clientClaim, this.jwtAudience)
-                            .claim("nonce", this.jwtNonce)
-                            .audience(this.jwtAudience)
-                            .issueTime(issuedAt)
-                            .notBeforeTime(issuedAt)
-                            .expirationTime(expireAt)
-                            .build())
+                    builder.build())
 
             // Compute the RSA signature
             jwtObject.sign(signer)
 
             return jwtObject.serialize()
+
         }
     }
 }

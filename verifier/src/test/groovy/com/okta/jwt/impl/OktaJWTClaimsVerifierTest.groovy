@@ -56,7 +56,8 @@ class OktaJWTClaimsVerifierTest {
 
         JWTClaimsSet claimsSet = new JWTClaimsSet(basicValidClaims + [
                 aud: ["my_audience"],
-                iss: "https//example.com/issuer"
+                iss: "https//example.com/issuer",
+                cid: "my_clientId"
         ])
 
         def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", "my_clientId")
@@ -64,11 +65,40 @@ class OktaJWTClaimsVerifierTest {
     }
 
     @Test
+    void noValidateClientIdAccessTokenDecodeTest() {
+
+        JWTClaimsSet claimsSet = new JWTClaimsSet(basicValidClaims + [
+                aud: ["my_audience"],
+                iss: "https//example.com/issuer",
+                cid: "my_clientId"
+        ])
+
+        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", null)
+        verifier.verify(claimsSet, null)
+    }
+
+    @Test
+    void invalidClientIdAccessTokenDecodeTest() {
+
+        JWTClaimsSet claimsSet = new JWTClaimsSet(basicValidClaims + [
+                aud: ["my_audience"],
+                iss: "https//example.com/issuer",
+                cid: "invalid"
+        ])
+
+        def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", "my_clientId")
+        expect(BadJWTException) {
+            verifier.verify(claimsSet, null)
+        }
+    }
+
+    @Test
     void missingTokenTypeInContextDecodeTest() {
 
         JWTClaimsSet claimsSet = new JWTClaimsSet(basicValidClaims + [
                 aud: ["my_audience"],
-                iss: "https//example.com/issuer"
+                iss: "https//example.com/issuer",
+                cid: "my_clientId"
         ])
 
         def verifier = new OktaJWTClaimsVerifier("https//example.com/issuer", "my_audience", "my_clientId")
