@@ -17,6 +17,7 @@ package com.okta.jwt
 
 import com.okta.jwt.impl.NimbusJwtVerifier
 import com.okta.jwt.impl.OktaJWTClaimsVerifier
+import org.hamcrest.Matcher
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.testng.annotations.Test
@@ -31,16 +32,7 @@ class JwtHelperTest {
 
     @Test
     void basicBuildTest() {
-        def helper = spy(new JwtHelper())
-
-        // when getResource is called, replace it with a call to get a static file
-        doAnswer(new Answer<Object>() {
-            @Override
-            Object answer(InvocationOnMock invocation) throws Throwable {
-                invocation.arguments[0] = JwtHelperTest.getResource("/mock-well-known.json")
-                return invocation.callRealMethod()
-            }
-        }).when(helper).readMetadataFromUrl(any(URL))
+        def helper = spyOnJwtHelper()
 
         helper.setClientId("clientId")
         expect(IllegalArgumentException) {
@@ -75,5 +67,35 @@ class JwtHelperTest {
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().audience, equalTo("my_audience"))
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().clientId, equalTo("clientId"))
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().issuer, equalTo("http://example.com/issuer"))
+        assertTimeout(verifier, equalTo(250))
+    }
+
+    @Test
+    void setConnectionTimeoutTest() {
+        def helper = spyOnJwtHelper()
+        helper.setAudience("my_audience")
+        helper.setIssuerUrl("http://example.com/issuer")
+        helper.setConnectionTimeout(3000)
+        JwtVerifier verifier = helper.build()
+        assertTimeout(verifier, equalTo(3000))
+    }
+
+    void assertTimeout(def verifier, Matcher<Integer> matcher) {
+        assertThat(verifier.jwtProcessor.jwsKeySelector.getJWKSource().jwkSetRetriever.connectTimeout, matcher)
+    }
+
+    JwtHelper spyOnJwtHelper() {
+        def helper = spy(new JwtHelper())
+
+        // when getResource is called, replace it with a call to get a static file
+        doAnswer(new Answer<Object>() {
+            @Override
+            Object answer(InvocationOnMock invocation) throws Throwable {
+                invocation.arguments[0] = JwtHelperTest.getResource("/mock-well-known.json")
+                return invocation.callRealMethod()
+            }
+        }).when(helper).readMetadataFromUrl(any(URL))
+
+        return helper
     }
 }

@@ -20,6 +20,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
 import com.nimbusds.jose.proc.JWSKeySelector;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
+import com.nimbusds.jose.util.DefaultResourceRetriever;
 import com.nimbusds.jose.util.IOUtils;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
@@ -38,6 +39,7 @@ public final class JwtHelper {
     private String issuerUrl;
     private String audience = "api://default";
     private String clientId;
+    private int connectionTimeout = RemoteJWKSet.DEFAULT_HTTP_CONNECT_TIMEOUT;
 
     public JwtHelper setIssuerUrl(String issuerUrl) {
 
@@ -58,6 +60,11 @@ public final class JwtHelper {
 
     public JwtHelper setClientId(String clientId) {
         this.clientId = clientId;
+        return this;
+    }
+
+    public JwtHelper setConnectionTimeout(int connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
         return this;
     }
 
@@ -82,7 +89,10 @@ public final class JwtHelper {
         // OAuth 2.0 server's JWK set, published at a well-known URL. The RemoteJWKSet
         // object caches the retrieved keys to speed up subsequent look-ups and can
         // also gracefully handle key-rollover
-        JWKSource keySource = new RemoteJWKSet(keysURI);
+        JWKSource keySource = new RemoteJWKSet(keysURI, new DefaultResourceRetriever(
+                connectionTimeout,
+                RemoteJWKSet.DEFAULT_HTTP_READ_TIMEOUT,
+                RemoteJWKSet.DEFAULT_HTTP_SIZE_LIMIT));
 
         // The expected JWS algorithm of the access tokens (agreed out-of-band)
         JWSAlgorithm expectedJWSAlg = JWSAlgorithm.RS256;
