@@ -67,21 +67,28 @@ class JwtHelperTest {
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().audience, equalTo("my_audience"))
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().clientId, equalTo("clientId"))
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().issuer, equalTo("http://example.com/issuer"))
-        assertTimeout(verifier, equalTo(250))
+        assertConnectionTimeout(verifier, equalTo(250))
+        assertReadTimeout(verifier, equalTo(250))
     }
 
     @Test
-    void setConnectionTimeoutTest() {
+    void setTimeoutsTest() {
         def helper = spyOnJwtHelper()
         helper.setAudience("my_audience")
         helper.setIssuerUrl("http://example.com/issuer")
         helper.setConnectionTimeout(3000)
+        helper.setReadTimeout(2500)
         JwtVerifier verifier = helper.build()
-        assertTimeout(verifier, equalTo(3000))
+        assertConnectionTimeout(verifier, equalTo(3000))
+        assertReadTimeout(verifier, equalTo(2500))
     }
 
-    void assertTimeout(def verifier, Matcher<Integer> matcher) {
+    void assertConnectionTimeout(def verifier, Matcher<Integer> matcher) {
         assertThat(verifier.jwtProcessor.jwsKeySelector.getJWKSource().jwkSetRetriever.connectTimeout, matcher)
+    }
+
+    void assertReadTimeout(def verifier, Matcher<Integer> matcher) {
+        assertThat(verifier.jwtProcessor.jwsKeySelector.getJWKSource().jwkSetRetriever.readTimeout, matcher)
     }
 
     JwtHelper spyOnJwtHelper() {
