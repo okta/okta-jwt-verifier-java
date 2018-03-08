@@ -40,6 +40,7 @@ public final class JwtHelper {
     private String audience = "api://default";
     private String clientId;
     private int connectionTimeout = RemoteJWKSet.DEFAULT_HTTP_CONNECT_TIMEOUT;
+    private int readTimeout = RemoteJWKSet.DEFAULT_HTTP_READ_TIMEOUT;
 
     public JwtHelper setIssuerUrl(String issuerUrl) {
 
@@ -68,6 +69,11 @@ public final class JwtHelper {
         return this;
     }
 
+    public JwtHelper setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+        return this;
+    }
+
     public JwtVerifier build() throws IOException, ParseException {
 
         notEmpty(issuerUrl, "IssuerUrl cannot be empty");
@@ -91,7 +97,7 @@ public final class JwtHelper {
         // also gracefully handle key-rollover
         JWKSource keySource = new RemoteJWKSet(keysURI, new DefaultResourceRetriever(
                 connectionTimeout,
-                RemoteJWKSet.DEFAULT_HTTP_READ_TIMEOUT,
+                readTimeout,
                 RemoteJWKSet.DEFAULT_HTTP_SIZE_LIMIT));
 
         // The expected JWS algorithm of the access tokens (agreed out-of-band)
