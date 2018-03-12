@@ -37,7 +37,8 @@ public class QuickStartExample {
         JwtVerifier jwtVerifier = new JwtHelper()
                                     .setIssuerUrl(issuerUrl)
                                     .setAudience(audience)
-                                    .setConnectionTimeout(250) // defaults to 250ms
+                                    .setConnectionTimeout(1000) // defaults to 1000ms
+                                    .setReadTimeout(1000)       // defaults to 1000ms
                                     .build();
 
         // 2. Process the token (includes validation)
