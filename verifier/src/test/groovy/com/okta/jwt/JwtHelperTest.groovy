@@ -67,8 +67,8 @@ class JwtHelperTest {
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().audience, equalTo("my_audience"))
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().clientId, equalTo("clientId"))
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().issuer, equalTo("http://example.com/issuer"))
-        assertConnectionTimeout(verifier, equalTo(250))
-        assertReadTimeout(verifier, equalTo(250))
+        assertConnectionTimeout(verifier, equalTo(1000))
+        assertReadTimeout(verifier, equalTo(1000))
     }
 
     @Test

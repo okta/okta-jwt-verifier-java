@@ -39,8 +39,8 @@ public final class JwtHelper {
     private String issuerUrl;
     private String audience = "api://default";
     private String clientId;
-    private int connectionTimeout = RemoteJWKSet.DEFAULT_HTTP_CONNECT_TIMEOUT;
-    private int readTimeout = RemoteJWKSet.DEFAULT_HTTP_READ_TIMEOUT;
+    private int connectionTimeout = 1000;
+    private int readTimeout = 1000;
 
     public JwtHelper setIssuerUrl(String issuerUrl) {
 
