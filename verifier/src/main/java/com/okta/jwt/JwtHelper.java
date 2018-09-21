@@ -24,8 +24,6 @@ import com.nimbusds.jose.util.DefaultResourceRetriever;
 import com.nimbusds.jose.util.IOUtils;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
-import com.nimbusds.oauth2.sdk.ParseException;
-import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 import com.okta.jwt.impl.NimbusJwtVerifier;
 import com.okta.jwt.impl.OktaJWTClaimsVerifier;
 
@@ -74,18 +72,13 @@ public final class JwtHelper {
         return this;
     }
 
-    public JwtVerifier build() throws IOException, ParseException {
+    public JwtVerifier build() throws IOException {
 
         notEmpty(issuerUrl, "IssuerUrl cannot be empty");
         notEmpty(audience, "Audience cannot be empty");
 
-        URL providerConfigurationURL = URI.create(issuerUrl + "/").resolve(".well-known/openid-configuration").toURL();
-
-        String metadata = readMetadataFromUrl(providerConfigurationURL);
-        OIDCProviderMetadata providerMetadata = OIDCProviderMetadata.parse(metadata);
-
-        // Keys URI from discovery
-        URL keysURI = providerMetadata.getJWKSetURI().toURL();
+        // Keys URI can be hard codeded to avoid an extra call to the discovery endpoint
+        URL keysURI = URI.create(issuerUrl).resolve("/v1/keys").toURL();
 
         // Set up a JWT processor to parse the tokens and then check their signature
         // and validity time window (bounded by the "iat", "nbf" and "exp" claims)
