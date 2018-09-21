@@ -45,13 +45,13 @@ class JwtHelperTest {
         }
 
         helper.setAudience(null)
-        helper.setIssuerUrl("http://example.com/issuer")
+        helper.setIssuerUrl("https://example.com/issuer")
         expect(IllegalArgumentException) {
             helper.build()
         }
 
         helper.setAudience("my_audience")
-        helper.setIssuerUrl("http://example.com/issuer")
+        helper.setIssuerUrl("https://example.com/issuer")
         JwtVerifier verifier = helper.build()
 
         assertThat(verifier, allOf(
@@ -66,7 +66,7 @@ class JwtHelperTest {
 
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().audience, equalTo("my_audience"))
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().clientId, equalTo("clientId"))
-        assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().issuer, equalTo("http://example.com/issuer"))
+        assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().issuer, equalTo("https://example.com/issuer"))
         assertConnectionTimeout(verifier, equalTo(1000))
         assertReadTimeout(verifier, equalTo(1000))
     }
@@ -75,7 +75,7 @@ class JwtHelperTest {
     void setTimeoutsTest() {
         def helper = spyOnJwtHelper()
         helper.setAudience("my_audience")
-        helper.setIssuerUrl("http://example.com/issuer")
+        helper.setIssuerUrl("https://example.com/issuer")
         helper.setConnectionTimeout(3000)
         helper.setReadTimeout(2500)
         JwtVerifier verifier = helper.build()
