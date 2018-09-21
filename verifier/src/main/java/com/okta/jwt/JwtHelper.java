@@ -24,6 +24,7 @@ import com.nimbusds.jose.util.DefaultResourceRetriever;
 import com.nimbusds.jose.util.IOUtils;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
+import com.okta.commons.configcheck.ConfigurationValidator;
 import com.okta.jwt.impl.NimbusJwtVerifier;
 import com.okta.jwt.impl.OktaJWTClaimsVerifier;
 
@@ -74,7 +75,7 @@ public final class JwtHelper {
 
     public JwtVerifier build() throws IOException {
 
-        notEmpty(issuerUrl, "IssuerUrl cannot be empty");
+        ConfigurationValidator.assertIssuer(issuerUrl);
         notEmpty(audience, "Audience cannot be empty");
 
         // Keys URI can be hard codeded to avoid an extra call to the discovery endpoint
