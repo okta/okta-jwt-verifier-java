@@ -34,7 +34,7 @@ The Okta JWT Verifier can created via a fluent `JwtHelper` class:
 
 ```java
 JwtVerifier jwtVerifier = new JwtHelper()
-    .setIssuerUrl("https://{yourOktaDomain}.com/oauth2/default")
+    .setIssuerUrl("https://{yourOktaDomain}/oauth2/default")
     .setAudience("api://default")  // defaults to 'api://default'
     .setConnectionTimeout(1000)    // defaults to 1000ms
     .setReadTimeout(1000)          // defaults to 1000ms
