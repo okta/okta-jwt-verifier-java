@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright 2017 Okta, Inc.
+# Copyright 2017-Present Okta, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
 # limitations under the License.
 #
 
+# ignore unused var in this script as this script defines common bits for our other scripts
+# shellcheck disable=SC2034
 
 # deploy snapshot from ONLY this branch
 SNAPSHOT_BRANCH="master"
+PROJECT_NAME="okta-jwt-verifier-parent"
 
 # Get the slug from the TRAVIS var, or parse the 'origin' remote
 REPO_SLUG=${REPO_SLUG:-${TRAVIS_REPO_SLUG:-$(git remote get-url origin | sed 's_.*\:__; s_.*github.com/__; s_\.git__')}}
@@ -25,7 +28,7 @@ PULL_REQUEST=${PULL_REQUEST:-${TRAVIS_PULL_REQUEST:-true}} # default to true
 BRANCH=${TRAVIS_BRANCH:-"$(git rev-parse --abbrev-ref HEAD)"}
 
 # run the ITs if we have an ENV_VARS are set
-if [ ! -z $TRAVIS_SECURE_ENV_VARS ] ; then
+if [ "$TRAVIS_SECURE_ENV_VARS" = true ] ; then
     RUN_ITS=true
 fi
 RUN_ITS=${RUN_ITS:-false}
@@ -45,18 +48,4 @@ echo "IS_RELEASE: ${IS_RELEASE}"
 echo "RUN_ITS: ${RUN_ITS}"
 
 # all the prep is done, lets run the build!
-MVN_CMD="mvn -s src/ci/settings.xml"
-
-function send_tag_notification()
-{
-    GIT_TAG="$1"
-    MAILGUN_DOMAIN="sandbox178e6a568a554fc7b4ddfb998d7a3ac4.mailgun.org"
-    MAIL_TO="Brian Demers <brian.demers@okta.com>"
-
-    curl -s --user "${MAILGUN_API_KEY}" \
-         https:/api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages\
-         -F from="Okta Notifications <postmaster@${MAILGUN_DOMAIN}>"\
-         -F to="${MAIL_TO}"\
-         -F subject="New Tag for ${REPO_SLUG}" \
-         -F text="A new tag was created for ${REPO_SLUG} - ${GIT_TAG}"
-}
+MVN_CMD="./mvnw -s src/ci/settings.xml -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -V"
