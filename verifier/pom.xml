@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.okta.commons</groupId>
             <artifactId>okta-config-check</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.nimbusds</groupId>
