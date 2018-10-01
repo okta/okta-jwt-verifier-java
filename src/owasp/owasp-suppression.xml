@@ -19,4 +19,9 @@
   -->
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
 
+    <suppress>
+   <notes><![CDATA[ false positive, this is a PHP library issue ]]></notes>
+   <cve>CVE-2016-7037</cve>
+</suppress>
+
 </suppressions>
