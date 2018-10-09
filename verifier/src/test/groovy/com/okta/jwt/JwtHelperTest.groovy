@@ -18,13 +18,10 @@ package com.okta.jwt
 import com.okta.jwt.impl.NimbusJwtVerifier
 import com.okta.jwt.impl.OktaJWTClaimsVerifier
 import org.hamcrest.Matcher
-import org.mockito.invocation.InvocationOnMock
-import org.mockito.stubbing.Answer
 import org.testng.annotations.Test
 
 import static com.okta.jwt.TestSupport.*
 
-import static org.mockito.Mockito.*
 import static org.hamcrest.Matchers.*
 import static org.hamcrest.MatcherAssert.*
 
@@ -32,7 +29,7 @@ class JwtHelperTest {
 
     @Test
     void basicBuildTest() {
-        def helper = spyOnJwtHelper()
+        def helper = new JwtHelper()
 
         helper.setClientId("clientId")
         expect(IllegalArgumentException) {
@@ -67,13 +64,24 @@ class JwtHelperTest {
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().audience, equalTo("my_audience"))
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().clientId, equalTo("clientId"))
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().issuer, equalTo("https://example.com/issuer"))
+        assertThat(verifier.jwtProcessor.getJWSKeySelector().getJWKSource().getJWKSetURL().toString(), equalTo("https://example.com/issuer/v1/keys"))
         assertConnectionTimeout(verifier, equalTo(1000))
         assertReadTimeout(verifier, equalTo(1000))
     }
 
     @Test
+    void issuerTrailingSlashTest() {
+        // the call to setIssuer() strips trailing slashes
+        def helper = new JwtHelper()
+        helper.setIssuerUrl("https://example.com/issuer/")
+        JwtVerifier verifier = helper.build()
+        assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().issuer, equalTo("https://example.com/issuer"))
+        assertThat(verifier.jwtProcessor.getJWSKeySelector().getJWKSource().getJWKSetURL().toString(), equalTo("https://example.com/issuer/v1/keys"))
+    }
+
+    @Test
     void setTimeoutsTest() {
-        def helper = spyOnJwtHelper()
+        def helper = new JwtHelper()
         helper.setAudience("my_audience")
         helper.setIssuerUrl("https://example.com/issuer")
         helper.setConnectionTimeout(3000)
@@ -89,20 +97,5 @@ class JwtHelperTest {
 
     void assertReadTimeout(def verifier, Matcher<Integer> matcher) {
         assertThat(verifier.jwtProcessor.jwsKeySelector.getJWKSource().jwkSetRetriever.readTimeout, matcher)
-    }
-
-    JwtHelper spyOnJwtHelper() {
-        def helper = spy(new JwtHelper())
-
-        // when getResource is called, replace it with a call to get a static file
-        doAnswer(new Answer<Object>() {
-            @Override
-            Object answer(InvocationOnMock invocation) throws Throwable {
-                invocation.arguments[0] = JwtHelperTest.getResource("/mock-well-known.json")
-                return invocation.callRealMethod()
-            }
-        }).when(helper).readMetadataFromUrl(any(URL))
-
-        return helper
     }
 }
