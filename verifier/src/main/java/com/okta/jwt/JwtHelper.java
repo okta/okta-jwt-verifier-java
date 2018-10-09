@@ -78,8 +78,8 @@ public final class JwtHelper {
         ConfigurationValidator.assertIssuer(issuerUrl);
         notEmpty(audience, "Audience cannot be empty");
 
-        // Keys URI can be hard codeded to avoid an extra call to the discovery endpoint
-        URL keysURI = URI.create(issuerUrl).resolve("/v1/keys").toURL();
+        // Keys URI can be hard coded to avoid an extra call to the discovery endpoint
+        URL keysURI = URI.create(issuerUrl + "/v1/keys").toURL();
 
         // Set up a JWT processor to parse the tokens and then check their signature
         // and validity time window (bounded by the "iat", "nbf" and "exp" claims)
