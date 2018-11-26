@@ -25,7 +25,7 @@ import com.okta.jwt.impl.Assert;
 public final class JjwtAccessTokenVerifierBuilder extends BaseVerifierBuilderSupport<AccessTokenVerifier.Builder, AccessTokenVerifier>
                                                   implements AccessTokenVerifier.Builder {
 
-    private String audience;
+    private String audience = "api://default";
 
     public AccessTokenVerifier.Builder setAudience(String audience) {
         Assert.notNull(audience, "audience cannot be null");

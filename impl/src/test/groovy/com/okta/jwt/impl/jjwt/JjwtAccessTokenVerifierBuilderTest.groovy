@@ -53,6 +53,7 @@ class JjwtAccessTokenVerifierBuilderTest {
         TestUtil.expect IllegalArgumentException, {
             new JjwtAccessTokenVerifierBuilder()
                     .setIssuer("https://issuer.example.com")
+                    .setAudience(null)
                     .build()
         }
     }
