@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Okta, Inc.
+ * Copyright 2018-Present Okta, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okta.jwt;
+package com.okta.jwt.impl.http;
 
-public interface JwtVerifier {
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
-    Jwt decodeIdToken(String jwtString, String nonce) throws JoseException;
+/**
+ * Classes in this `impl` implementation package may change in NON backward compatible way, and should ONLY be used as
+ * a "runtime" dependency.
+ */
+public interface HttpClient {
 
-    Jwt decodeAccessToken(String jwtString) throws JoseException;
+    InputStream get(URL url) throws IOException;
 }

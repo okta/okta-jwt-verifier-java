@@ -15,16 +15,16 @@
  */
 package com.okta.jwt;
 
-import java.time.Instant;
-import java.util.Map;
+/**
+ * Thrown if a JWT is invalid or expired.
+ */
+public class JwtVerificationException extends Exception {
 
-public interface Jwt {
+    public JwtVerificationException(String message) {
+        super(message);
+    }
 
-    String getTokenValue();
-
-    Instant getIssuedAt();
-
-    Instant getExpiresAt();
-
-    Map<String, Object> getClaims();
+    public JwtVerificationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

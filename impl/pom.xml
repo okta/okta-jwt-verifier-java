@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2017 Okta, Inc.
+  ~ Copyright 2017-Present Okta, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -21,27 +21,24 @@
     <parent>
         <groupId>com.okta.jwt</groupId>
         <artifactId>okta-jwt-verifier-parent</artifactId>
-        <version>0.3.4-SNAPSHOT</version>
+        <version>0.4.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>okta-jwt-verifier</artifactId>
+    <artifactId>okta-jwt-verifier-impl</artifactId>
     <name>Okta JWT Verifier</name>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.okta.jwt</groupId>
+            <artifactId>okta-jwt-verifier</artifactId>
+            <version>0.4.0-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>com.okta.commons</groupId>
             <artifactId>okta-config-check</artifactId>
             <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.nimbusds</groupId>
-            <artifactId>oauth2-oidc-sdk</artifactId>
-            <version>5.30</version>
-        </dependency>
-        <dependency>
-            <groupId>com.nimbusds</groupId>
-            <artifactId>nimbus-jose-jwt</artifactId>
-            <version>4.39.2</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -63,7 +60,6 @@
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
             <version>0.10.5</version>
-            <!--<scope>runtime</scope>-->
         </dependency>
 
         <dependency>
@@ -73,6 +69,11 @@
         </dependency>
 
         <!-- test deps -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
+            <version>3.11.0</version>
+        </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>java-hamcrest</artifactId>
@@ -91,6 +92,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

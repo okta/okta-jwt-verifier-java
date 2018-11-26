@@ -1,0 +1,20 @@
+{
+  "keys": [
+    {
+      "kty": "RSA",
+      "alg": "RS256",
+      "kid": "other-bar",
+      "use": "sig",
+      "e": "AQAB",
+      "n": "7KjRGKEcR4Uizgc90GxgblqjLegbWCJyc7WF3vKGOcwazfZxMDryGU0BtYAKAe-HBZhu471r1jj8UXB_8GE7wVXMcDWLno89HkkW3feGss31qwVw6YiqFvV1LHm9Y57lyIBaKsnItIusBrI6NWoaDe6AuKm3WCX2sLrDixKzKsg4uPgtvMI4YFl7-ov2UKSAI2YqVmdOg2V9LxhKJU8GwyO0CjQWc4JoGV4U7HHhQHOihOsQ1ErrdEBuHxPq7rcQG229S8Qe-aSIDf5L4PPMnBYdCRPSWPWN8YiPXx85aXpVoEJRdlYOsgTxalFFh-ANSjwk0PbgqBWrLwBCZVLprQ"
+    },
+    {
+      "kty": "RSA",
+      "alg": "RS256",
+      "kid": "key-two",
+      "use": "sig",
+      "e": "AQAB",
+      "n": "zM8gL_7XYQVoGbjh9gaKeComVsQi02XMSm23BBnCgficQ0Af3JyNDTKtcIDGNZ743iz1R41NxtqupisWudpgaoWryGZBmsyzmYCYX1Er6QMVTtnpbDaJC00Uy6NRq7jETxJMPegKbXKmlevRljrKtEWeTZ3QKbexBr9vlU-4t8jJwOvTKyx_lAFe5Ab1rciV-NNdArpyL7eZfmP4wja6l8TvGfWZ6DnjSeUvIzwc4g-DfEP7tv-nLL5aRXo3TpI4e3mGEWI-sQ_h0IiUzWHZatgkWwV0MKysFo5MpkJ0tu8oobNOv0vGcnmi48JcIpF7kyLJnVL0vkr30PtXNaU_8w"
+    }
+  ]
+}

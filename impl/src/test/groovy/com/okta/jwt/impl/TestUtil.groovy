@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Okta, Inc.
+ * Copyright 2018-Present Okta, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,35 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okta.jwt
+package com.okta.jwt.impl
 
-import org.hamcrest.Matcher
-import org.testng.Assert
-import static org.hamcrest.MatcherAssert.assertThat
+import java.security.KeyPair
+import java.security.KeyPairGenerator
 
-class TestSupport {
+final class TestUtil {
 
-    static def ignoring = { Class<? extends Throwable> catchMe, Closure callMe ->
+    private TestUtil() {}
+
+    static def expect = { Class<? extends Throwable> catchMe, Closure callMe ->
         try {
             callMe.call()
+            org.testng.Assert.fail("Expected ${catchMe.getName()} to be thrown.")
         } catch(e) {
             if (!e.class.isAssignableFrom(catchMe)) {
                 throw e
             }
+            return e
         }
     }
 
-    static def expect = { Class<? extends Throwable> catchMe, Matcher<String> messageMatcher=null, Closure callMe ->
-        try {
-            callMe.call()
-            Assert.fail("Expected ${catchMe.getName()} to be thrown.")
-        } catch(e) {
-            if (!e.class.isAssignableFrom(catchMe)) {
-                throw e
-            }
-            if (messageMatcher != null) {
-                assertThat(e.getMessage(), messageMatcher)
-            }
-        }
+    static KeyPair generateRsaKeyPair(int keysize = 4096) {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA")
+        keyPairGenerator.initialize(keysize)
+        return keyPairGenerator.generateKeyPair()
     }
 }

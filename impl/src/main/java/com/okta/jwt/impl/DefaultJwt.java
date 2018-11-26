@@ -22,10 +22,14 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.okta.jwt.impl.Assert.*;
+import static com.okta.jwt.impl.Assert.notEmpty;
+import static com.okta.jwt.impl.Assert.notNull;
 
 /**
  * Default simple bean implementation of {@link Jwt}.
+ *
+ * Classes in this `impl` implementation package may change in NON backward compatible way, and should ONLY be used as
+ * a "runtime" dependency.
  */
 public class DefaultJwt implements Jwt {
 
