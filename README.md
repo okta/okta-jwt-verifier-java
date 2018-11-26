@@ -26,6 +26,13 @@ For validating a JWT, you will need a few different items:
     <artifactId>okta-jwt-verifier</artifactId>
     <version>${okta-jwt.version}</version>
   </dependency>
+  
+  <dependency>
+    <groupId>com.okta.jwt</groupId>
+    <artifactId>okta-jwt-verifier-impl</artifactId>
+    <version>${okta-jwt.version}</version>
+    <scope>runtime</scope>
+  </dependency>
 ```
 
 # Setting up the Library
