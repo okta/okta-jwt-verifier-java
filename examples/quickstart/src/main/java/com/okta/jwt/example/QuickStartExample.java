@@ -15,9 +15,9 @@
  */
 package com.okta.jwt.example;
 
+import com.okta.jwt.AccessTokenVerifier;
 import com.okta.jwt.Jwt;
-import com.okta.jwt.JwtHelper;
-import com.okta.jwt.JwtVerifier;
+import com.okta.jwt.JwtVerifiers;
 
 public class QuickStartExample {
 
@@ -34,15 +34,15 @@ public class QuickStartExample {
 
 
         // 1. build the parser
-        JwtVerifier jwtVerifier = new JwtHelper()
-                                    .setIssuerUrl(issuerUrl)
+        AccessTokenVerifier jwtVerifier = JwtVerifiers.accessTokenVerifierBuilder()
+                                    .setIssuer(issuerUrl)
                                     .setAudience(audience)
                                     .setConnectionTimeout(1000) // defaults to 1000ms
                                     .setReadTimeout(1000)       // defaults to 1000ms
                                     .build();
 
         // 2. Process the token (includes validation)
-        Jwt jwt = jwtVerifier.decodeAccessToken(jwtString);
+        Jwt jwt = jwtVerifier.decode(jwtString);
 
         // 3. Do something with the token
         System.out.println(jwt.getTokenValue()); // print the token

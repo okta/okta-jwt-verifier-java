@@ -17,7 +17,13 @@ package com.okta.jwt.impl;
 
 import java.util.Map;
 
-class Assert {
+/**
+ * Classes in this `impl` implementation package may change in NON backward compatible way, and should ONLY be used as
+ * a "runtime" dependency.
+ */
+public final class Assert {
+
+    private Assert() {}
 
     /**
      * Assert that an object is not <code>null</code> .
@@ -26,7 +32,7 @@ class Assert {
      * @param message the exception message to use if the assertion fails
      * @throws IllegalArgumentException if the object is <code>null</code>
      */
-    static void notNull(Object object, String message) {
+    public static void notNull(Object object, String message) {
         if (object == null) {
             throw new IllegalArgumentException(message);
         }
@@ -40,7 +46,7 @@ class Assert {
      * @param message the exception message to use if the assertion fails
      * @throws IllegalArgumentException if the map is <code>null</code> or has no entries
      */
-    static void notEmpty(Map map, String message) {
+    public static void notEmpty(Map map, String message) {
         if (map == null || map.isEmpty()) {
             throw new IllegalArgumentException(message);
         }

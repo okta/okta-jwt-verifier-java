@@ -33,13 +33,12 @@ For validating a JWT, you will need a few different items:
 The Okta JWT Verifier can created via a fluent `JwtHelper` class:
 
 ```java
-JwtVerifier jwtVerifier = new JwtHelper()
-    .setIssuerUrl("https://{yourOktaDomain}/oauth2/default")
-    .setAudience("api://default")  // defaults to 'api://default'
-    .setConnectionTimeout(1000)    // defaults to 1000ms
-    .setReadTimeout(1000)          // defaults to 1000ms
-    .setClientId("your_client_id") // optional
-    .build();
+AccessTokenVerifier jwtVerifier = JwtVerifiers.accessTokenVerifierBuilder()
+      .setIssuer("https://{yourOktaDomain}/oauth2/default")
+      .setAudience("api://default")      // defaults to 'api://default'
+      .setConnectionTimeout(1000) // defaults to 1000ms
+      .setReadTimeout(1000)       // defaults to 1000ms
+      .build();
 ```
 
 This helper class configures a JWT parser with the details found via the [OpenID Connect discovery endpoint](https://openid.net/specs/openid-connect-discovery-1_0.html).  The public keys used to validate the JWTs will also be retrieved 
@@ -52,7 +51,7 @@ in the authorization header, you will need to make sure that this is still valid
 `decode` method (where `jwtString` is your access token in string format).
 
 ```java
-Jwt jwt = jwtVerifier.decodeAccessToken(jwtString);
+Jwt jwt = jwtVerifier.decode(jwtString);
 ```
 
 This will validate your JWT for the following:
