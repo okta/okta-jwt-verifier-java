@@ -32,7 +32,6 @@ public class OkHttpClient implements HttpClient {
 
     private final okhttp3.OkHttpClient client;
 
-    // TODO add proxy config
     public OkHttpClient(long connectionTimeout, long readTimeout) {
 
         client = new okhttp3.OkHttpClient.Builder()
