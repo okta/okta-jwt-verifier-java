@@ -15,15 +15,18 @@
  */
 package com.okta.jwt.impl.http
 
+import com.okta.jwt.RestoreSystemProperties
 import com.okta.jwt.impl.TestUtil
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import org.testng.annotations.Listeners
 import org.testng.annotations.Test
 
 import static org.hamcrest.Matchers.containsString
 import static org.hamcrest.Matchers.is
 import static org.junit.Assert.assertThat
 
+@Listeners(RestoreSystemProperties.class)
 class OkHttpClientTest {
 
     @Test
@@ -51,6 +54,25 @@ class OkHttpClientTest {
             def e = TestUtil.expect(IOException, { new OkHttpClient(20L, 20L).get(url) })
             assertThat e.getMessage(), containsString("400")
             assertThat e.getMessage(), containsString(url.toString())
+        } finally {
+            server.shutdown()
+        }
+    }
+
+    @Test()
+    void proxyConfigTest() {
+
+        def server = new MockWebServer()
+        server.enqueue(new MockResponse().setBody("a response body"))
+        def url = server.url("/v1/foo").url()
+
+        System.setProperty("http.proxyHost", url.host)
+        System.setProperty("http.proxyPort", url.port.toString())
+
+        try {
+            def responseStream = new OkHttpClient(20L, 20L)
+                    .get(new URL("http://invalid.example.com:8080/v1/foo"))
+            assertThat responseStream.text, is("a response body")
         } finally {
             server.shutdown()
         }
