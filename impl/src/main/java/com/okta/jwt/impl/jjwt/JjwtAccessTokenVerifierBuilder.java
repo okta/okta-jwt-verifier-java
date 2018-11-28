@@ -17,6 +17,8 @@ package com.okta.jwt.impl.jjwt;
 
 import com.okta.jwt.AccessTokenVerifier;
 import com.okta.jwt.impl.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Classes in this `impl` implementation package may change in NON backward compatible way, and should ONLY be used as
@@ -25,6 +27,7 @@ import com.okta.jwt.impl.Assert;
 public final class JjwtAccessTokenVerifierBuilder extends BaseVerifierBuilderSupport<AccessTokenVerifier.Builder, AccessTokenVerifier>
                                                   implements AccessTokenVerifier.Builder {
 
+    private final static Logger log = LoggerFactory.getLogger(JjwtAccessTokenVerifierBuilder.class);
     private String audience = "api://default";
 
     public AccessTokenVerifier.Builder setAudience(String audience) {
@@ -38,6 +41,10 @@ public final class JjwtAccessTokenVerifierBuilder extends BaseVerifierBuilderSup
         super.validate();
         if (audience == null || audience.isEmpty()) {
             throw new IllegalArgumentException("audience cannot be null or empty");
+        }
+
+        if (!getIssuer().matches(".*/oauth2/.*")) {
+            log.warn("Decoding access tokens from this issuer '{}' may not be possible. Your issuer URL should be in the format of 'https://{yourOktaDomain}/oauth2/qualifier'", getIssuer());
         }
     }
 
