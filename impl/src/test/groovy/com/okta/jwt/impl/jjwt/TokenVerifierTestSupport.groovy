@@ -208,6 +208,23 @@ abstract class TokenVerifierTestSupport {
                 .setExpiration(Date.from(now.minus(8L, ChronoUnit.SECONDS))))
     }
 
+
+    @Test
+    void notBeforeOverLeeway() {
+        Instant now = Instant.now()
+        TestUtil.expect JwtVerificationException, {
+            buildThenDecodeToken(baseJwtBuilder()
+                    .setNotBefore(Date.from(now.plus(11L, ChronoUnit.SECONDS))))
+        }
+    }
+
+    @Test
+    void notBeforeUnderLeeway() {
+        Instant now = Instant.now()
+        buildThenDecodeToken(baseJwtBuilder()
+                .setNotBefore(Date.from(now.minus(9L, ChronoUnit.SECONDS))))
+    }
+
     String buildJwtWithFudgedHeader(String headerJson, String body) {
         return buildJwtWithFudgedHeader(headerJson, body.getBytes(StandardCharsets.UTF_8))
     }
