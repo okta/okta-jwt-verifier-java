@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2017 Okta, Inc.
+  ~ Copyright 2017-Present Okta
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -18,13 +19,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.okta.jwt.examples</groupId>
-        <artifactId>okta-jwt-verifier-examples</artifactId>
+        <groupId>com.okta.jwt</groupId>
+        <artifactId>okta-jwt-verifier-parent</artifactId>
         <version>0.4.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>okta-jwt-verifier-examples-quickstart</artifactId>
-    <name>Okta JWT Verifier :: Examples :: Quick Start</name>
+    <artifactId>okta-jwt-verifier-coverage</artifactId>
+    <name>Okta JWT Verifier :: Test Coverage</name>
+    <description>Project wide code coverage</description>
+    <packaging>pom</packaging>
 
     <dependencies>
         <dependency>
@@ -34,22 +37,29 @@
         <dependency>
             <groupId>com.okta.jwt</groupId>
             <artifactId>okta-jwt-verifier-impl</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
-            <!-- Required for any libraries that expect to call the commons logging APIs -->
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <scope>runtime</scope>
+            <groupId>com.okta.jwt</groupId>
+            <artifactId>okta-jwt-verifier-integration-tests</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <defaultGoal>spring-boot:run</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>jacoco-report</id>
+                        <goals>
+                            <goal>report-aggregate</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>
