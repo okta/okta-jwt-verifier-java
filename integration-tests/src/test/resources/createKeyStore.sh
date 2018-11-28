@@ -28,7 +28,6 @@ set -e
 # programmatically: `System.setProperty("javax.net.ssl.trustStore", "/path/to/keystore")`
 
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-keystore_file="${dir}/tck-keystore.jks"
 file_prefix="${dir}/tck-keystore"
 rm -f ${file_prefix}*
 
