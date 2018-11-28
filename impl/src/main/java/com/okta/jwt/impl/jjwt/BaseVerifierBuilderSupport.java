@@ -30,16 +30,21 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
     private long connectionTimeout = 1000L;
     private long readTimeout = 1000L;
 
-    public String getIssuer() {
+    String getIssuer() {
         return issuer;
     }
 
     public B setIssuer(String issuer) {
-        this.issuer = issuer;
+
+        // delay validation until 'validate' method is called
+        if (issuer != null) {
+            // trim and remove any trailing slash
+            this.issuer = issuer.trim().replaceAll("/$", "");
+        }
         return self();
     }
 
-    public long getLeeway() {
+    long getLeeway() {
         return leeway;
     }
 
@@ -51,7 +56,7 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         return self();
     }
 
-    public long getConnectionTimeout() {
+    long getConnectionTimeout() {
         return connectionTimeout;
     }
 
@@ -60,7 +65,7 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         return self();
     }
 
-    public long getReadTimeout() {
+    long getReadTimeout() {
         return readTimeout;
     }
 
@@ -78,10 +83,16 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         ConfigurationValidator.assertIssuer(issuer);
     }
 
+    protected String resolveKeysEndpoint(String issuer) {
+        return  issuer.matches(".*/oauth2/.*")
+                    ? issuer + "/v1/keys"
+                    : issuer + "/oauth2/v1/keys";
+    }
+
     protected SigningKeyResolver signingKeyResolver() {
         try {
-            return  new RemoteJwkSigningKeyResolver(
-                            new URL(getIssuer() + "/v1/keys"), // TODO see spec for how to figure out keys endpoint
+            return new RemoteJwkSigningKeyResolver(
+                            new URL(resolveKeysEndpoint(getIssuer())),
                             new OkHttpClient(getConnectionTimeout(), getReadTimeout()));
         } catch (MalformedURLException e) {
             throw new IllegalStateException("Invalid issuer URL in configuration");

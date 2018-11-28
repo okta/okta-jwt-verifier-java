@@ -98,7 +98,7 @@ final class RemoteJwkSigningKeyResolver implements SigningKeyResolver {
             keyMap.putAll(newKeys);
 
         } catch (IOException e) {
-            throw new JwtException("Failed to fetch keys from URL: " + jwkUri);
+            throw new JwtException("Failed to fetch keys from URL: " + jwkUri, e);
         }
     }
 

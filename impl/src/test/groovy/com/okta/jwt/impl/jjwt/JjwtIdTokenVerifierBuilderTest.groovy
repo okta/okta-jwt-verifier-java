@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.is
 class JjwtIdTokenVerifierBuilderTest {
 
     @Test
-    void happyPathTest() {
+    void orgIssuerTest() {
         def verifier = new JjwtIdTokenVerifierBuilder()
             .setIssuer("https://issuer.example.com")
             .setClientId("foo-clientId")
@@ -35,7 +35,21 @@ class JjwtIdTokenVerifierBuilderTest {
         assertThat verifier.issuer, is("https://issuer.example.com")
         assertThat verifier.leeway, is(120L)
         assertThat verifier.keyResolver, instanceOf(RemoteJwkSigningKeyResolver)
-        assertThat verifier.keyResolver.jwkUri, is(new URL("https://issuer.example.com/v1/keys"))
+        assertThat verifier.keyResolver.jwkUri, is(new URL("https://issuer.example.com/oauth2/v1/keys"))
+    }
+
+    @Test
+    void customIssuerTest() {
+        def verifier = new JjwtIdTokenVerifierBuilder()
+            .setIssuer("https://issuer.example.com/oauth2/anAsId")
+            .setClientId("foo-clientId")
+            .build()
+
+        assertThat verifier.clientId, is("foo-clientId")
+        assertThat verifier.issuer, is("https://issuer.example.com/oauth2/anAsId")
+        assertThat verifier.leeway, is(120L)
+        assertThat verifier.keyResolver, instanceOf(RemoteJwkSigningKeyResolver)
+        assertThat verifier.keyResolver.jwkUri, is(new URL("https://issuer.example.com/oauth2/anAsId/v1/keys"))
     }
 
     @Test
