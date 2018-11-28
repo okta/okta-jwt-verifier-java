@@ -39,10 +39,30 @@
         <module>api</module>
         <module>impl</module>
         <module>examples</module>
+        <module>integration-tests</module>
+        <module>coverage</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
+
+            <!-- project modules -->
+            <dependency>
+                <groupId>com.okta.jwt</groupId>
+                <artifactId>okta-jwt-verifier</artifactId>
+                <version>0.4.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.okta.jwt</groupId>
+                <artifactId>okta-jwt-verifier-impl</artifactId>
+                <version>0.4.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.okta.jwt</groupId>
+                <artifactId>okta-jwt-verifier-integration-tests</artifactId>
+                <version>0.4.0-SNAPSHOT</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
