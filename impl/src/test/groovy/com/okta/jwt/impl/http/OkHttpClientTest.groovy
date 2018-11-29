@@ -15,6 +15,7 @@
  */
 package com.okta.jwt.impl.http
 
+import com.okta.commons.lang.ApplicationInfo
 import com.okta.jwt.RestoreSystemProperties
 import com.okta.jwt.impl.TestUtil
 import okhttp3.mockwebserver.MockResponse
@@ -24,10 +25,25 @@ import org.testng.annotations.Test
 
 import static org.hamcrest.Matchers.containsString
 import static org.hamcrest.Matchers.is
+import static org.hamcrest.Matchers.not
 import static org.junit.Assert.assertThat
 
 @Listeners(RestoreSystemProperties.class)
 class OkHttpClientTest {
+
+    def expectedVersion
+
+    OkHttpClientTest() {
+        Properties props = new Properties()
+        props.load(OkHttpClientTest.getResourceAsStream("/" + ApplicationInfo.VERSION_FILE_LOCATION))
+        expectedVersion = props.getProperty("okta-jwt-verifier-java")
+    }
+
+    @Test
+    void validateVersionTest() {
+        // make sure the version has been filtered
+        assertThat expectedVersion, not(containsString('${project.version}'))
+    }
 
     @Test
     void simpleSuccessTest() {
@@ -38,6 +54,7 @@ class OkHttpClientTest {
         try {
             def responseStream = new OkHttpClient(20L, 20L).get(url)
             assertThat responseStream.text, is("a response body")
+            assertThat server.takeRequest().getHeader("User-Agent"), containsString("okta-jwt-verifier-java/${expectedVersion}")
         } finally {
             server.shutdown()
         }
