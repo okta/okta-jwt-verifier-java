@@ -22,8 +22,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.okta.jwt.impl.Assert.notEmpty;
-import static com.okta.jwt.impl.Assert.notNull;
+import static com.okta.commons.lang.Assert.notEmpty;
+import static com.okta.commons.lang.Assert.notNull;
 
 /**
  * Default simple bean implementation of {@link Jwt}.

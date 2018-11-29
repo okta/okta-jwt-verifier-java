@@ -16,7 +16,7 @@
 package com.okta.jwt.impl.jjwt;
 
 
-import com.okta.jwt.impl.Assert;
+import com.okta.commons.lang.Assert;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.IncorrectClaimException;
 import io.jsonwebtoken.Jws;

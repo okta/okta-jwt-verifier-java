@@ -16,7 +16,7 @@
 package com.okta.jwt.impl.jjwt;
 
 import com.okta.jwt.AccessTokenVerifier;
-import com.okta.jwt.impl.Assert;
+import com.okta.commons.lang.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
