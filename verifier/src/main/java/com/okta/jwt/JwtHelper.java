@@ -79,7 +79,7 @@ public final class JwtHelper {
         notEmpty(audience, "Audience cannot be empty");
 
         // Keys URI can be hard coded to avoid an extra call to the discovery endpoint
-        URL keysURI = URI.create(issuerUrl + "/v1/keys").toURL();
+        URL keysURI = URI.create(resolveKeysEndpoint(issuerUrl)).toURL();
 
         // Set up a JWT processor to parse the tokens and then check their signature
         // and validity time window (bounded by the "iat", "nbf" and "exp" claims)
@@ -121,4 +121,11 @@ public final class JwtHelper {
             throw new IllegalArgumentException(message);
         }
     }
+
+    private static String resolveKeysEndpoint(String issuer) {
+    return  issuer.matches(".*/oauth2/.*")
+                ? issuer + "/v1/keys"
+                : issuer + "/oauth2/v1/keys";
+    }
+
 }

@@ -42,13 +42,13 @@ class JwtHelperTest {
         }
 
         helper.setAudience(null)
-        helper.setIssuerUrl("https://example.com/issuer")
+        helper.setIssuerUrl("https://example.com/oauth2/issuer")
         expect(IllegalArgumentException) {
             helper.build()
         }
 
         helper.setAudience("my_audience")
-        helper.setIssuerUrl("https://example.com/issuer")
+        helper.setIssuerUrl("https://example.com/oauth2/issuer")
         JwtVerifier verifier = helper.build()
 
         assertThat(verifier, allOf(
@@ -63,8 +63,8 @@ class JwtHelperTest {
 
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().audience, equalTo("my_audience"))
         assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().clientId, equalTo("clientId"))
-        assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().issuer, equalTo("https://example.com/issuer"))
-        assertThat(verifier.jwtProcessor.getJWSKeySelector().getJWKSource().getJWKSetURL().toString(), equalTo("https://example.com/issuer/v1/keys"))
+        assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().issuer, equalTo("https://example.com/oauth2/issuer"))
+        assertThat(verifier.jwtProcessor.getJWSKeySelector().getJWKSource().getJWKSetURL().toString(), equalTo("https://example.com/oauth2/issuer/v1/keys"))
         assertConnectionTimeout(verifier, equalTo(1000))
         assertReadTimeout(verifier, equalTo(1000))
     }
@@ -73,17 +73,27 @@ class JwtHelperTest {
     void issuerTrailingSlashTest() {
         // the call to setIssuer() strips trailing slashes
         def helper = new JwtHelper()
-        helper.setIssuerUrl("https://example.com/issuer/")
+        helper.setIssuerUrl("https://example.com/oauth2/issuer/")
         JwtVerifier verifier = helper.build()
-        assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().issuer, equalTo("https://example.com/issuer"))
-        assertThat(verifier.jwtProcessor.getJWSKeySelector().getJWKSource().getJWKSetURL().toString(), equalTo("https://example.com/issuer/v1/keys"))
+        assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().issuer, equalTo("https://example.com/oauth2/issuer"))
+        assertThat(verifier.jwtProcessor.getJWSKeySelector().getJWKSource().getJWKSetURL().toString(), equalTo("https://example.com/oauth2/issuer/v1/keys"))
+    }
+
+    @Test
+    void testOrgIssuer() {
+        // the call to setIssuer() strips trailing slashes
+        def helper = new JwtHelper()
+        helper.setIssuerUrl("https://example.com")
+        JwtVerifier verifier = helper.build()
+        assertThat(verifier.jwtProcessor.getJWTClaimsSetVerifier().issuer, equalTo("https://example.com"))
+        assertThat(verifier.jwtProcessor.getJWSKeySelector().getJWKSource().getJWKSetURL().toString(), equalTo("https://example.com/oauth2/v1/keys"))
     }
 
     @Test
     void setTimeoutsTest() {
         def helper = new JwtHelper()
         helper.setAudience("my_audience")
-        helper.setIssuerUrl("https://example.com/issuer")
+        helper.setIssuerUrl("https://example.com/oauth2/issuer")
         helper.setConnectionTimeout(3000)
         helper.setReadTimeout(2500)
         JwtVerifier verifier = helper.build()
