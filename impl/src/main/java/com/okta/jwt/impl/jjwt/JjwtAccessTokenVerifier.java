@@ -20,6 +20,8 @@ import com.okta.jwt.Jwt;
 import com.okta.jwt.JwtVerificationException;
 import io.jsonwebtoken.SigningKeyResolver;
 
+import java.time.Duration;
+
 /**
  * Classes in this `impl` implementation package may change in NON backward compatible way, and should ONLY be used as
  * a "runtime" dependency.
@@ -31,7 +33,7 @@ public class JjwtAccessTokenVerifier extends TokenVerifierSupport
 
     public JjwtAccessTokenVerifier(String issuer,
                                    String audience,
-                                   long leeway,
+                                   Duration leeway,
                                    SigningKeyResolver signingKeyResolver) {
 
         super(issuer, leeway, signingKeyResolver);

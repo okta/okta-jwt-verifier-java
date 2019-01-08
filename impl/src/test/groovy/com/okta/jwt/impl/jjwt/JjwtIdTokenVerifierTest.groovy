@@ -23,6 +23,7 @@ import io.jsonwebtoken.io.JacksonSerializer
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
+import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -75,7 +76,7 @@ class JjwtIdTokenVerifierTest extends TokenVerifierTestSupport {
 
     com.okta.jwt.Jwt decodeToken(String token, SigningKeyResolver signingKeyResolver, String nonce) {
 
-        def verifier = new JjwtIdTokenVerifier(TEST_ISSUER, TEST_CLIENT_ID, 10L, signingKeyResolver)
+        def verifier = new JjwtIdTokenVerifier(TEST_ISSUER, TEST_CLIENT_ID, Duration.ofSeconds(10L), signingKeyResolver)
         return verifier.decode(token, nonce)
     }
 
