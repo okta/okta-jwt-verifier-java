@@ -28,14 +28,16 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SigningKeyResolver;
 import io.jsonwebtoken.UnsupportedJwtException;
 
+import java.time.Duration;
+
 abstract class TokenVerifierSupport {
 
     private final SigningKeyResolver keyResolver;
     private final String issuer;
-    private final long leeway;
+    private final Duration leeway;
 
     TokenVerifierSupport(String issuer,
-                         long leeway,
+                         Duration leeway,
                          SigningKeyResolver signingKeyResolver) {
         this.issuer = issuer;
         this.leeway = leeway;
@@ -46,7 +48,7 @@ abstract class TokenVerifierSupport {
          return Jwts.parser()
                 .setSigningKeyResolver(keyResolver)
                 .requireIssuer(issuer)
-                .setAllowedClockSkewSeconds(leeway);
+                .setAllowedClockSkewSeconds(leeway.getSeconds());
     }
 
     protected Jwt decode(String token, JwtParser parser, ClaimsValidator claimsValidator) throws JwtVerificationException {
@@ -74,7 +76,7 @@ abstract class TokenVerifierSupport {
         return issuer;
     }
 
-    long getLeeway() {
+    Duration getLeeway() {
         return leeway;
     }
 

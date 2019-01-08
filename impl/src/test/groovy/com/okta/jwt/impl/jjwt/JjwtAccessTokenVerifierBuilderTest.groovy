@@ -19,6 +19,8 @@ import com.okta.jwt.impl.TestUtil
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
+import java.time.Duration
+
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.instanceOf
 import static org.hamcrest.Matchers.is
@@ -34,7 +36,7 @@ class JjwtAccessTokenVerifierBuilderTest {
 
         assertThat verifier.audience, is("foo-aud")
         assertThat verifier.issuer, is("https://issuer.example.com")
-        assertThat verifier.leeway, is(120L)
+        assertThat verifier.leeway, is(Duration.ofMinutes(2L))
         assertThat verifier.keyResolver, instanceOf(RemoteJwkSigningKeyResolver)
         assertThat verifier.keyResolver.jwkUri, is(new URL("https://issuer.example.com/oauth2/v1/keys"))
     }
@@ -48,7 +50,7 @@ class JjwtAccessTokenVerifierBuilderTest {
 
         assertThat verifier.audience, is("foo-aud")
         assertThat verifier.issuer, is("https://issuer.example.com/oauth2/anAsId")
-        assertThat verifier.leeway, is(120L)
+        assertThat verifier.leeway, is(Duration.ofMinutes(2L))
         assertThat verifier.keyResolver, instanceOf(RemoteJwkSigningKeyResolver)
         assertThat verifier.keyResolver.jwkUri, is(new URL("https://issuer.example.com/oauth2/anAsId/v1/keys"))
     }
@@ -119,7 +121,7 @@ class JjwtAccessTokenVerifierBuilderTest {
             new JjwtAccessTokenVerifierBuilder()
                     .setIssuer("https://issuer.example.com")
                     .setAudience("foo-aud")
-                    .setReadTimeout(-1L)
+                    .setReadTimeout(Duration.ofSeconds(-1L))
                     .build()
         }
     }
@@ -130,7 +132,7 @@ class JjwtAccessTokenVerifierBuilderTest {
             new JjwtAccessTokenVerifierBuilder()
                     .setIssuer("https://issuer.example.com")
                     .setAudience("foo-aud")
-                    .setConnectionTimeout(-1L)
+                    .setConnectionTimeout(Duration.ofSeconds(-1L))
                     .build()
         }
     }
@@ -141,7 +143,7 @@ class JjwtAccessTokenVerifierBuilderTest {
             new JjwtAccessTokenVerifierBuilder()
                     .setIssuer("https://issuer.example.com")
                     .setAudience("foo-aud")
-                    .setLeeway(-1L)
+                    .setLeeway(Duration.ofSeconds(-1L))
                     .build()
         }
     }

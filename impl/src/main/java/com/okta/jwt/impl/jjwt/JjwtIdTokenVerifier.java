@@ -22,6 +22,8 @@ import io.jsonwebtoken.IncorrectClaimException;
 import io.jsonwebtoken.SigningKeyResolver;
 import io.jsonwebtoken.lang.Objects;
 
+import java.time.Duration;
+
 /**
  * Classes in this `impl` implementation package may change in NON backward compatible way, and should ONLY be used as
  * a "runtime" dependency.
@@ -33,7 +35,7 @@ public class JjwtIdTokenVerifier extends TokenVerifierSupport
 
     public JjwtIdTokenVerifier(String issuer,
                                String clientId,
-                               long leeway,
+                               Duration leeway,
                                SigningKeyResolver signingKeyResolver) {
 
         super(issuer, leeway, signingKeyResolver);

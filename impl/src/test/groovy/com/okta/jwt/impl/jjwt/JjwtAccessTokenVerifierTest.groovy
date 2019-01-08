@@ -26,6 +26,7 @@ import io.jsonwebtoken.io.JacksonSerializer
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
+import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -80,7 +81,7 @@ class JjwtAccessTokenVerifierTest extends TokenVerifierTestSupport{
 
     @Override
     Jwt decodeToken(String token, SigningKeyResolver signingKeyResolver) {
-        return new JjwtAccessTokenVerifier(TEST_ISSUER, TEST_AUDIENCE_ID, 10L, signingKeyResolver)
+        return new JjwtAccessTokenVerifier(TEST_ISSUER, TEST_AUDIENCE_ID,  Duration.ofSeconds(10L), signingKeyResolver)
             .decode(token)
     }
 

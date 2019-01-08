@@ -18,6 +18,8 @@ package com.okta.jwt.impl.jjwt
 import com.okta.jwt.impl.TestUtil
 import org.testng.annotations.Test
 
+import java.time.Duration
+
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.instanceOf
 import static org.hamcrest.Matchers.is
@@ -33,7 +35,7 @@ class JjwtIdTokenVerifierBuilderTest {
 
         assertThat verifier.clientId, is("foo-clientId")
         assertThat verifier.issuer, is("https://issuer.example.com")
-        assertThat verifier.leeway, is(120L)
+        assertThat verifier.leeway, is(Duration.ofMinutes(2L))
         assertThat verifier.keyResolver, instanceOf(RemoteJwkSigningKeyResolver)
         assertThat verifier.keyResolver.jwkUri, is(new URL("https://issuer.example.com/oauth2/v1/keys"))
     }
@@ -47,7 +49,7 @@ class JjwtIdTokenVerifierBuilderTest {
 
         assertThat verifier.clientId, is("foo-clientId")
         assertThat verifier.issuer, is("https://issuer.example.com/oauth2/anAsId")
-        assertThat verifier.leeway, is(120L)
+        assertThat verifier.leeway, is(Duration.ofMinutes(2L))
         assertThat verifier.keyResolver, instanceOf(RemoteJwkSigningKeyResolver)
         assertThat verifier.keyResolver.jwkUri, is(new URL("https://issuer.example.com/oauth2/anAsId/v1/keys"))
     }

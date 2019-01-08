@@ -19,6 +19,8 @@ import com.okta.jwt.AccessTokenVerifier;
 import com.okta.jwt.Jwt;
 import com.okta.jwt.JwtVerifiers;
 
+import java.time.Duration;
+
 public class QuickStartExample {
 
     public static void main(String[] args) throws Exception {
@@ -37,8 +39,8 @@ public class QuickStartExample {
         AccessTokenVerifier jwtVerifier = JwtVerifiers.accessTokenVerifierBuilder()
                                     .setIssuer(issuerUrl)
                                     .setAudience(audience)
-                                    .setConnectionTimeout(1000) // defaults to 1000ms
-                                    .setReadTimeout(1000)       // defaults to 1000ms
+                                    .setConnectionTimeout(Duration.ofSeconds(1)) // defaults to 1000ms
+                                    .setReadTimeout(Duration.ofSeconds(1))       // defaults to 1000ms
                                     .build();
 
         // 2. Process the token (includes validation)

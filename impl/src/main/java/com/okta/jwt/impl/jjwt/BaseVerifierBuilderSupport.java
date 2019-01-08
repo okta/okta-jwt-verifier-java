@@ -16,19 +16,21 @@
 package com.okta.jwt.impl.jjwt;
 
 import com.okta.commons.configcheck.ConfigurationValidator;
+import com.okta.commons.lang.Assert;
 import com.okta.jwt.VerifierBuilderSupport;
 import com.okta.jwt.impl.http.OkHttpClient;
 import io.jsonwebtoken.SigningKeyResolver;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
 
 abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> implements VerifierBuilderSupport<B, R> {
 
     private String issuer;
-    private long leeway = 120L;
-    private long connectionTimeout = 1000L;
-    private long readTimeout = 1000L;
+    private Duration leeway = Duration.ofMinutes(2);
+    private Duration connectionTimeout = Duration.ofSeconds(1);
+    private Duration readTimeout = Duration.ofSeconds(1);
 
     String getIssuer() {
         return issuer;
@@ -44,32 +46,32 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         return self();
     }
 
-    long getLeeway() {
+    Duration getLeeway() {
         return leeway;
     }
 
-    public B setLeeway(long leeway) { // TODO use duration
-        if (leeway < 0) {
-            throw new IllegalArgumentException("leeway must not be less than zero");
+    public B setLeeway(Duration leeway) {
+        if (leeway == null || leeway.toMillis() < 0) {
+            throw new IllegalArgumentException("leeway must not be null or less than zero");
         }
         this.leeway = leeway;
         return self();
     }
 
-    long getConnectionTimeout() {
+    Duration getConnectionTimeout() {
         return connectionTimeout;
     }
 
-    public B setConnectionTimeout(long connectionTimeout) {
+    public B setConnectionTimeout(Duration connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
         return self();
     }
 
-    long getReadTimeout() {
+    Duration getReadTimeout() {
         return readTimeout;
     }
 
-    public B setReadTimeout(long readTimeout) {
+    public B setReadTimeout(Duration readTimeout) {
         this.readTimeout = readTimeout;
         return self();
     }

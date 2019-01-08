@@ -15,6 +15,8 @@
  */
 package com.okta.jwt;
 
+import java.time.Duration;
+
 /**
  * JWT Verifier Builder support class (defines common properties used for general JWT validation).
  *
@@ -35,26 +37,26 @@ public interface VerifierBuilderSupport<B extends VerifierBuilderSupport, R> {
     /**
      * Sets the {@code leeway} the verifier will allow.
      *
-     * @param leeway clock skew leeway in seconds
+     * @param leeway clock skew leeway
      * @return a reference to the current builder for use in method chaining
      */
-    B setLeeway(long leeway);
+    B setLeeway(Duration leeway);
 
     /**
      * Sets the {@code connectionTimeout} for the verifier.
      *
-     * @param connectionTimeout connection timeout in milliseconds
+     * @param connectionTimeout connection timeout
      * @return a reference to the current builder for use in method chaining
      */
-    B setConnectionTimeout(long connectionTimeout);
+    B setConnectionTimeout(Duration connectionTimeout);
 
     /**
      * Sets the {@code issuer} the verifier will expect.
      *
-     * @param readTimeout connection timeout in milliseconds
+     * @param readTimeout connection timeout
      * @return a reference to the current builder for use in method chaining
      */
-    B setReadTimeout(long readTimeout);
+    B setReadTimeout(Duration readTimeout);
 
     /**
      * Constructs a JWT Verifier.

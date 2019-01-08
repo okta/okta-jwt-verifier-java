@@ -23,6 +23,8 @@ import okhttp3.mockwebserver.MockWebServer
 import org.testng.annotations.Listeners
 import org.testng.annotations.Test
 
+import java.time.Duration
+
 import static org.hamcrest.Matchers.containsString
 import static org.hamcrest.Matchers.is
 import static org.hamcrest.Matchers.not
@@ -52,7 +54,7 @@ class OkHttpClientTest {
         server.enqueue(new MockResponse().setBody("a response body"))
         def url = server.url("/v1/foo").url()
         try {
-            def responseStream = new OkHttpClient(20L, 20L).get(url)
+            def responseStream = new OkHttpClient(Duration.ofMillis(20L), Duration.ofMillis(20L)).get(url)
             assertThat responseStream.text, is("a response body")
             assertThat server.takeRequest().getHeader("User-Agent"), containsString("okta-jwt-verifier-java/${expectedVersion}")
         } finally {
@@ -68,7 +70,7 @@ class OkHttpClientTest {
         def url = server.url("/foobar").url()
 
         try {
-            def e = TestUtil.expect(IOException, { new OkHttpClient(20L, 20L).get(url) })
+            def e = TestUtil.expect(IOException, { new OkHttpClient(Duration.ofSeconds(20L), Duration.ofSeconds(20L)).get(url) })
             assertThat e.getMessage(), containsString("400")
             assertThat e.getMessage(), containsString(url.toString())
         } finally {
@@ -87,7 +89,7 @@ class OkHttpClientTest {
         System.setProperty("http.proxyPort", url.port.toString())
 
         try {
-            def responseStream = new OkHttpClient(20L, 20L)
+            def responseStream = new OkHttpClient(Duration.ofSeconds(20L), Duration.ofSeconds(20L))
                     .get(new URL("http://invalid.example.com:8080/v1/foo"))
             assertThat responseStream.text, is("a response body")
         } finally {
