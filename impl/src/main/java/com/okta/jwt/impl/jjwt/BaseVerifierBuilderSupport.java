@@ -16,7 +16,6 @@
 package com.okta.jwt.impl.jjwt;
 
 import com.okta.commons.configcheck.ConfigurationValidator;
-import com.okta.commons.lang.Assert;
 import com.okta.jwt.VerifierBuilderSupport;
 import com.okta.jwt.impl.http.OkHttpClient;
 import io.jsonwebtoken.SigningKeyResolver;
