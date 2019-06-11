@@ -238,10 +238,8 @@ abstract class TokenVerifierTestSupport {
             .signWith(ORG_KEY_PAIR.getPrivate(), SignatureAlgorithm.RS256)
             .compact()
 
-//        def e = expect JwtVerificationException, {
-            decodeToken(token, signingKeyResolver)
-//        }
-//        assertThat e.getMessage(), equalTo("Failed to parse token. Possible cause, the token issuer does not match the configured issuer of: https://test.example.com/issuer")
+        def e = expect JwtVerificationException, {decodeToken(token, signingKeyResolver)}
+        assertThat e.getMessage(), equalTo("Failed to parse token. Possible cause, the token issuer does not match the configured issuer of: https://test.example.com/issuer")
     }
 
     String buildJwtWithFudgedHeader(String headerJson, String body) {
