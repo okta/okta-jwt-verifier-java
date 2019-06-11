@@ -27,6 +27,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SigningKeyResolver;
 import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 
 import java.time.Duration;
 
@@ -63,6 +64,8 @@ abstract class TokenVerifierSupport {
                     jwt.getBody().getIssuedAt().toInstant(),
                     jwt.getBody().getExpiration().toInstant(),
                     jwt.getBody());
+        } catch (SignatureException e) {
+            throw new JwtVerificationException("Failed to parse token. Possible cause, the token issuer does not match the configured issuer of: "+ issuer, e);
         } catch (JwtException e) {
             throw new JwtVerificationException("Failed to parse token", e);
         }

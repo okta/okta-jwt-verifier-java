@@ -37,7 +37,10 @@ import java.security.KeyPair
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
+import static com.okta.jwt.impl.TestUtil.expect
 import static org.hamcrest.MatcherAssert.assertThat
+import static org.hamcrest.Matchers.containsString
+import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.mockito.ArgumentMatchers.any
 import static org.mockito.Mockito.mock
@@ -50,6 +53,7 @@ abstract class TokenVerifierTestSupport {
     public final static String TEST_PUB_KEY_ID = "TEST_PUB_KEY_ID"
     public final static String TEST_ISSUER = "https://test.example.com/issuer"
     public final static KeyPair TEST_KEY_PAIR = TestUtil.generateRsaKeyPair(2048)
+    public final static KeyPair ORG_KEY_PAIR = TestUtil.generateRsaKeyPair(2048)
     protected SigningKeyResolver signingKeyResolver
 
     TokenVerifierTestSupport() {
@@ -90,12 +94,12 @@ abstract class TokenVerifierTestSupport {
                 .setNotBefore(Date.from(now))
                 .setExpiration(Date.from(now.plus(1L, ChronoUnit.HOURS)))
                 .setHeader(Jwts.jwsHeader()
-                .setKeyId(TEST_PUB_KEY_ID))
+                    .setKeyId(TEST_PUB_KEY_ID))
     }
 
     @Test
     void missingIssuerClaim() {
-        TestUtil.expect JwtVerificationException, {
+        expect JwtVerificationException, {
             buildThenDecodeToken(baseJwtBuilder()
                     .setIssuer(null))
         }
@@ -103,7 +107,7 @@ abstract class TokenVerifierTestSupport {
 
     @Test(dataProvider = "invalidIssuers")
     void invalidIssuersTest(Object issuer) {
-        TestUtil.expect JwtVerificationException, {
+        expect JwtVerificationException, {
             buildThenDecodeToken(baseJwtBuilder()
                     .claim("iss", issuer))
         }
@@ -115,14 +119,14 @@ abstract class TokenVerifierTestSupport {
                 .signWith(TEST_KEY_PAIR.getPrivate(), SignatureAlgorithm.RS384)
                 .compact()
 
-        TestUtil.expect JwtVerificationException, {
+        expect JwtVerificationException, {
             decodeToken(token)
         }
     }
 
     @Test
     void nullAudienceTest() {
-        TestUtil.expect JwtVerificationException, {
+        expect JwtVerificationException, {
             buildThenDecodeToken(baseJwtBuilder()
                     .claim("aud", null))
         }
@@ -132,7 +136,7 @@ abstract class TokenVerifierTestSupport {
     void nullAlg() {
         def token = buildJwtWithFudgedHeader('{"kid": "' + TEST_PUB_KEY_ID + '"}')
 
-        TestUtil.expect JwtVerificationException, {
+        expect JwtVerificationException, {
             decodeToken(token)
         }
     }
@@ -141,7 +145,7 @@ abstract class TokenVerifierTestSupport {
     void duplicateAlgRsaAndNone() {
         def token = buildJwtWithFudgedHeader('{"kid": "' + TEST_PUB_KEY_ID + '", "alg": "RS256", "alg": "none"}')
 
-        TestUtil.expect JwtVerificationException, {
+        expect JwtVerificationException, {
             decodeToken(token)
         }
     }
@@ -165,7 +169,7 @@ abstract class TokenVerifierTestSupport {
         def jwtBuilder = baseJwtBuilder()
         def token = jwtBuilder.compact()
 
-        TestUtil.expect JwtVerificationException, {
+        expect JwtVerificationException, {
             decodeToken(token)
         }
     }
@@ -173,21 +177,21 @@ abstract class TokenVerifierTestSupport {
     @Test
     void bodyIsNotJson() {
         def token = buildJwtWithFudgedHeader('{"kid": "' + TEST_PUB_KEY_ID + '", "alg": "RS256"}', "Some non-JSON string")
-        TestUtil.expect JwtVerificationException, {
+        expect JwtVerificationException, {
             decodeToken(token)
         }
     }
 
     @Test
     void nullToken() {
-        TestUtil.expect JwtVerificationException, {
+        expect JwtVerificationException, {
             decodeToken(null)
         }
     }
 
     @Test(dataProvider = "invalidStringTokens")
     void invalidStringTokensTest(String tokenString) {
-        TestUtil.expect JwtVerificationException, {
+        expect JwtVerificationException, {
             decodeToken(tokenString)
         }
     }
@@ -195,7 +199,7 @@ abstract class TokenVerifierTestSupport {
     @Test
     void expiredOverLeeway() {
         Instant now = Instant.now()
-        TestUtil.expect JwtVerificationException, {
+        expect JwtVerificationException, {
             buildThenDecodeToken(baseJwtBuilder()
                     .setExpiration(Date.from(now.minus(10L, ChronoUnit.SECONDS))))
         }
@@ -212,7 +216,7 @@ abstract class TokenVerifierTestSupport {
     @Test
     void notBeforeOverLeeway() {
         Instant now = Instant.now()
-        TestUtil.expect JwtVerificationException, {
+        expect JwtVerificationException, {
             buildThenDecodeToken(baseJwtBuilder()
                     .setNotBefore(Date.from(now.plus(11L, ChronoUnit.SECONDS))))
         }
@@ -223,6 +227,21 @@ abstract class TokenVerifierTestSupport {
         Instant now = Instant.now()
         buildThenDecodeToken(baseJwtBuilder()
                 .setNotBefore(Date.from(now.minus(9L, ChronoUnit.SECONDS))))
+    }
+
+    @Test
+    void oktaOrgIssuerMismatch() {
+        String token = baseJwtBuilder()
+            .setIssuer("https://test.example.com")
+            .setHeader(Jwts.jwsHeader()
+                .setKeyId("OKTA_ORG_KEY"))
+            .signWith(ORG_KEY_PAIR.getPrivate(), SignatureAlgorithm.RS256)
+            .compact()
+
+//        def e = expect JwtVerificationException, {
+            decodeToken(token, signingKeyResolver)
+//        }
+//        assertThat e.getMessage(), equalTo("Failed to parse token. Possible cause, the token issuer does not match the configured issuer of: https://test.example.com/issuer")
     }
 
     String buildJwtWithFudgedHeader(String headerJson, String body) {
