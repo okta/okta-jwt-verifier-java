@@ -37,8 +37,9 @@ class JjwtAccessTokenVerifierBuilderTest {
         assertThat verifier.audience, is("foo-aud")
         assertThat verifier.issuer, is("https://issuer.example.com")
         assertThat verifier.leeway, is(Duration.ofMinutes(2L))
-        assertThat verifier.keyResolver, instanceOf(RemoteJwkSigningKeyResolver)
-        assertThat verifier.keyResolver.jwkUri, is(new URL("https://issuer.example.com/oauth2/v1/keys"))
+        assertThat verifier.keyResolver, instanceOf(IssuerMatchingSigningKeyResolver)
+        assertThat verifier.keyResolver.delegate, instanceOf(RemoteJwkSigningKeyResolver)
+        assertThat verifier.keyResolver.delegate.jwkUri, is(new URL("https://issuer.example.com/oauth2/v1/keys"))
     }
 
     @Test
@@ -51,8 +52,9 @@ class JjwtAccessTokenVerifierBuilderTest {
         assertThat verifier.audience, is("foo-aud")
         assertThat verifier.issuer, is("https://issuer.example.com/oauth2/anAsId")
         assertThat verifier.leeway, is(Duration.ofMinutes(2L))
-        assertThat verifier.keyResolver, instanceOf(RemoteJwkSigningKeyResolver)
-        assertThat verifier.keyResolver.jwkUri, is(new URL("https://issuer.example.com/oauth2/anAsId/v1/keys"))
+        assertThat verifier.keyResolver, instanceOf(IssuerMatchingSigningKeyResolver)
+        assertThat verifier.keyResolver.delegate, instanceOf(RemoteJwkSigningKeyResolver)
+        assertThat verifier.keyResolver.delegate.jwkUri, is(new URL("https://issuer.example.com/oauth2/anAsId/v1/keys"))
     }
 
     @Test(dataProvider = "validIssuers")
