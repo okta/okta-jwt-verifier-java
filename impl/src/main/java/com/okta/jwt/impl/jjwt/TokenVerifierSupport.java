@@ -19,7 +19,6 @@ import com.okta.jwt.Jwt;
 import com.okta.jwt.JwtVerificationException;
 import com.okta.jwt.impl.DefaultJwt;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.IncorrectClaimException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtHandlerAdapter;
@@ -42,7 +41,7 @@ abstract class TokenVerifierSupport {
                          SigningKeyResolver signingKeyResolver) {
         this.issuer = issuer;
         this.leeway = leeway;
-        this.keyResolver =  new IssuerMatchingSigningKeyResolver(issuer, signingKeyResolver);
+        this.keyResolver = new IssuerMatchingSigningKeyResolver(issuer, signingKeyResolver);
     }
 
     protected JwtParser parser() {
@@ -64,13 +63,6 @@ abstract class TokenVerifierSupport {
                     jwt.getBody().getIssuedAt().toInstant(),
                     jwt.getBody().getExpiration().toInstant(),
                     jwt.getBody());
-        } catch (IncorrectClaimException e) {
-            // add a possible cause if the issuer is invalid
-            if (Claims.ISSUER.equals(e.getClaimName())) {
-                throw new JwtVerificationException("Failed to parse token. Possible cause, the token issuer does not match the configured issuer of: "+ issuer, e);
-            }
-            // fallback to generic exception
-            throw new JwtVerificationException("Failed to parse token", e);
         } catch (JwtException e) {
             throw new JwtVerificationException("Failed to parse token", e);
         }

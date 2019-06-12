@@ -44,9 +44,9 @@ final class IssuerMatchingSigningKeyResolver implements SigningKeyResolver {
         // avoid fetching keys if the issuer is not correct
         if (!issuer.equals(claims.getIssuer())) {
             String msg = String.format(ClaimJwtException.INCORRECT_EXPECTED_CLAIM_MESSAGE_TEMPLATE, Claims.ISSUER, issuer, claims.getIssuer());
-            IncorrectClaimException e = new IncorrectClaimException(header, claims, msg);
-            e.setClaimName(Claims.ISSUER);
-            throw e;
+            IncorrectClaimException incorrectClaimException = new IncorrectClaimException(header, claims, msg);
+            incorrectClaimException.setClaimName(Claims.ISSUER);
+            throw incorrectClaimException;
         }
 
         return delegate.resolveSigningKey(header, claims);

@@ -39,7 +39,6 @@ import java.time.temporal.ChronoUnit
 
 import static com.okta.jwt.impl.TestUtil.expect
 import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.containsString
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.mockito.ArgumentMatchers.any
@@ -231,15 +230,17 @@ abstract class TokenVerifierTestSupport {
 
     @Test
     void oktaOrgIssuerMismatch() {
+        def orgIssuer = "https://test.example.com"
         String token = baseJwtBuilder()
-            .setIssuer("https://test.example.com")
+            .setIssuer(orgIssuer)
             .setHeader(Jwts.jwsHeader()
                 .setKeyId("OKTA_ORG_KEY"))
             .signWith(ORG_KEY_PAIR.getPrivate(), SignatureAlgorithm.RS256)
             .compact()
 
         def e = expect JwtVerificationException, {decodeToken(token, signingKeyResolver)}
-        assertThat e.getMessage(), equalTo("Failed to parse token. Possible cause, the token issuer does not match the configured issuer of: https://test.example.com/issuer")
+        assertThat e.getMessage(), equalTo("Failed to parse token")
+        assertThat e.cause.getMessage(), equalTo("Expected iss claim to be: ${TEST_ISSUER}, but was: ${orgIssuer}.".toString())
     }
 
     String buildJwtWithFudgedHeader(String headerJson, String body) {
