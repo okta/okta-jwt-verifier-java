@@ -40,6 +40,10 @@ public class OkHttpClient implements HttpClient {
 
     private final okhttp3.OkHttpClient client;
 
+    public OkHttpClient(Duration connectionTimeout, Duration readTimeout) {
+        this(connectionTimeout, readTimeout, null);
+    }
+
     public OkHttpClient(Duration connectionTimeout, Duration readTimeout, Proxy proxy) {
         okhttp3.OkHttpClient.Builder builder = new okhttp3.OkHttpClient.Builder()
                 .connectTimeout(connectionTimeout.toMillis(), TimeUnit.MILLISECONDS)
