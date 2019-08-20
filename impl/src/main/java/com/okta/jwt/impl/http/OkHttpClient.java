@@ -22,6 +22,7 @@ import okhttp3.ResponseBody;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Proxy;
 import java.net.URL;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -39,15 +40,18 @@ public class OkHttpClient implements HttpClient {
 
     private final okhttp3.OkHttpClient client;
 
-    public OkHttpClient(Duration connectionTimeout, Duration readTimeout) {
-
-        client = new okhttp3.OkHttpClient.Builder()
+    public OkHttpClient(Duration connectionTimeout, Duration readTimeout, Proxy proxy) {
+        okhttp3.OkHttpClient.Builder builder = new okhttp3.OkHttpClient.Builder()
                 .connectTimeout(connectionTimeout.toMillis(), TimeUnit.MILLISECONDS)
                 .readTimeout(readTimeout.toMillis(), TimeUnit.MILLISECONDS)
                 .writeTimeout(readTimeout.toMillis(), TimeUnit.MILLISECONDS)
-                .retryOnConnectionFailure(true)
-                .build();
+                .retryOnConnectionFailure(true);
 
+        if (proxy != null) {
+            builder.proxy(proxy);
+        }
+
+        client = builder.build();
     }
 
     public InputStream get(URL url) throws IOException {

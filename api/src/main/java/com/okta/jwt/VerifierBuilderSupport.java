@@ -15,6 +15,7 @@
  */
 package com.okta.jwt;
 
+import java.net.Proxy;
 import java.time.Duration;
 
 /**
@@ -51,12 +52,20 @@ public interface VerifierBuilderSupport<B extends VerifierBuilderSupport, R> {
     B setConnectionTimeout(Duration connectionTimeout);
 
     /**
-     * Sets the {@code issuer} the verifier will expect.
+     * Sets the {@code readTimeout} for the verifier.
      *
      * @param readTimeout connection timeout
      * @return a reference to the current builder for use in method chaining
      */
     B setReadTimeout(Duration readTimeout);
+
+    /**
+     * Sets the {@code proxy} for the verifier.
+     *
+     * @param proxy proxy
+     * @return a reference to the current builder for use in method chaining
+     */
+    B setProxy(Proxy proxy);
 
     /**
      * Constructs a JWT Verifier.

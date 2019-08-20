@@ -45,6 +45,7 @@ AccessTokenVerifier jwtVerifier = JwtVerifiers.accessTokenVerifierBuilder()
       .setAudience("api://default")      // defaults to 'api://default'
       .setConnectionTimeout(1000) // defaults to 1000ms
       .setReadTimeout(1000)       // defaults to 1000ms
+      .setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 8080)))    //defaults to null
       .build();
 ```
 

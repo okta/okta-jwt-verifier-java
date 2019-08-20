@@ -21,6 +21,7 @@ import com.okta.jwt.impl.http.OkHttpClient;
 import io.jsonwebtoken.SigningKeyResolver;
 
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
 import java.time.Duration;
 
@@ -30,6 +31,7 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
     private Duration leeway = Duration.ofMinutes(2);
     private Duration connectionTimeout = Duration.ofSeconds(1);
     private Duration readTimeout = Duration.ofSeconds(1);
+    private Proxy proxy;
 
     String getIssuer() {
         return issuer;
@@ -75,6 +77,15 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         return self();
     }
 
+    public Proxy getProxy() {
+        return proxy;
+    }
+
+    public B setProxy(Proxy proxy) {
+        this.proxy = proxy;
+        return self();
+    }
+
     @SuppressWarnings("unchecked")
     protected B self() {
         return (B) this;
@@ -86,15 +97,15 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
 
     protected String resolveKeysEndpoint(String issuer) {
         return  issuer.matches(".*/oauth2/.*")
-                    ? issuer + "/v1/keys"
-                    : issuer + "/oauth2/v1/keys";
+                ? issuer + "/v1/keys"
+                : issuer + "/oauth2/v1/keys";
     }
 
     protected SigningKeyResolver signingKeyResolver() {
         try {
             return new RemoteJwkSigningKeyResolver(
-                            new URL(resolveKeysEndpoint(getIssuer())),
-                            new OkHttpClient(getConnectionTimeout(), getReadTimeout()));
+                    new URL(resolveKeysEndpoint(getIssuer())),
+                    new OkHttpClient(getConnectionTimeout(), getReadTimeout(), proxy));
         } catch (MalformedURLException e) {
             throw new IllegalStateException("Invalid issuer URL in configuration");
         }
