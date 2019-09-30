@@ -86,4 +86,17 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.okta</groupId>
+                    <artifactId>okta-code-snippet-maven-plugin</artifactId>
+                    <configuration>
+                        <sourceFile>examples/quickstart/src/main/java/com/okta/jwt/example/ReadmeSnippets.java</sourceFile>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
