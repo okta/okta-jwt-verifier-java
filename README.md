@@ -37,16 +37,20 @@ For validating a JWT, you will need a few different items:
 
 # Setting up the Library
 
-The Okta JWT Verifier can created via a fluent `JwtHelper` class:
+The Okta JWT Verifier can created via a fluent `JwtVerifiers` class:
 
+[//]: # (NOTE: code snippets in this README are updated automatically via a Maven plugin by running: mvn okta-code-snippet:snip)
+ 
+[//]: # (method: basicUsage)
 ```java
 AccessTokenVerifier jwtVerifier = JwtVerifiers.accessTokenVerifierBuilder()
-      .setIssuer("https://{yourOktaDomain}/oauth2/default")
-      .setAudience("api://default")      // defaults to 'api://default'
-      .setConnectionTimeout(1000) // defaults to 1000ms
-      .setReadTimeout(1000)       // defaults to 1000ms
-      .build();
+    .setIssuer("https://{yourOktaDomain}/oauth2/default")
+    .setAudience("api://default")                // defaults to 'api://default'
+    .setConnectionTimeout(Duration.ofSeconds(1)) // defaults to 1s
+    .setReadTimeout(Duration.ofSeconds(1))       // defaults to 1s
+    .build();
 ```
+[//]: # (end: basicUsage)
 
 This helper class configures a JWT parser with the details found via the [OpenID Connect discovery endpoint](https://openid.net/specs/openid-connect-discovery-1_0.html).  The public keys used to validate the JWTs will also be retrieved 
 and cached automatically.
