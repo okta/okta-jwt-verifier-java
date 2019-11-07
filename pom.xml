@@ -20,8 +20,7 @@
     <parent>
         <groupId>com.okta</groupId>
         <artifactId>okta-parent</artifactId>
-        <version>13</version>
-        <relativePath>../okta-java-parent</relativePath>
+        <version>16</version>
     </parent>
 
     <groupId>com.okta.jwt</groupId>
@@ -32,8 +31,8 @@
 
     <properties>
         <github.slug>okta/okta-jwt-verifier-java</github.slug>
-        <okhttp.version>3.11.0</okhttp.version>
-        <okta.commons.version>1.1.1</okta.commons.version>
+        <okhttp.version>3.14.4</okhttp.version>
+        <okta.commons.version>1.2.2</okta.commons.version>
     </properties>
 
     <modules>
@@ -46,6 +45,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.10.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
             <!-- project modules -->
             <dependency>
