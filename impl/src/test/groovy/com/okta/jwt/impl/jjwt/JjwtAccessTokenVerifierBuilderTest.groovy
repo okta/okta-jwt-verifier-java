@@ -116,17 +116,6 @@ class JjwtAccessTokenVerifierBuilderTest {
     }
 
     @Test
-    void readTimeout_negativeTest() {
-        TestUtil.expect IllegalArgumentException, {
-            new JjwtAccessTokenVerifierBuilder()
-                    .setIssuer("https://issuer.example.com")
-                    .setAudience("foo-aud")
-                    .setReadTimeout(Duration.ofSeconds(-1L))
-                    .build()
-        }
-    }
-
-    @Test
     void connectionTimeout_negativeTest() {
         TestUtil.expect IllegalArgumentException, {
             new JjwtAccessTokenVerifierBuilder()

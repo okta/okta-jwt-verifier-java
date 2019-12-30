@@ -16,20 +16,29 @@
 package com.okta.jwt.impl.jjwt;
 
 import com.okta.commons.configcheck.ConfigurationValidator;
+import com.okta.commons.http.authc.DisabledAuthenticator;
+import com.okta.commons.http.config.HttpClientConfiguration;
 import com.okta.jwt.VerifierBuilderSupport;
-import com.okta.jwt.impl.http.OkHttpClient;
+import com.okta.jwt.impl.http.HttpClient;
+import com.okta.jwt.impl.http.OktaCommonsHttpClient;
 import io.jsonwebtoken.SigningKeyResolver;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
+import java.util.Objects;
 
 abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> implements VerifierBuilderSupport<B, R> {
 
     private String issuer;
     private Duration leeway = Duration.ofMinutes(2);
     private Duration connectionTimeout = Duration.ofSeconds(1);
-    private Duration readTimeout = Duration.ofSeconds(1);
+    private String proxyHost = null;
+    private int proxyPort;
+    private String proxyUsername = null;
+    private String proxyPassword = null;
+    private int maxRetryAttempts = 3;
+    private Duration maxRetryMaxElapsed = Duration.ofSeconds(10);
 
     String getIssuer() {
         return issuer;
@@ -66,12 +75,61 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         return self();
     }
 
-    Duration getReadTimeout() {
-        return readTimeout;
+    public String getProxyHost() {
+        return proxyHost;
     }
 
-    public B setReadTimeout(Duration readTimeout) {
-        this.readTimeout = readTimeout;
+    @Override
+    public B setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+        return self();
+    }
+
+    public int getProxyPort() {
+        return proxyPort;
+    }
+
+    @Override
+    public B setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
+        return self();
+    }
+
+    public String getProxyUsername() {
+        return proxyUsername;
+    }
+
+    @Override
+    public B setProxyUsername(String proxyUsername) {
+        this.proxyUsername = proxyUsername;
+        return self();
+    }
+
+    public String getProxyPassword() {
+        return proxyPassword;
+    }
+
+    @Override
+    public B setProxyPassword(String proxyPassword) {
+        this.proxyPassword = proxyPassword;
+        return self();
+    }
+
+    public int getMaxHttpRetryAttempts() {
+        return maxRetryAttempts;
+    }
+
+    public B setMaxHttpRetryAttempts(int maxRetryAttempts) {
+        this.maxRetryAttempts = maxRetryAttempts;
+        return self();
+    }
+
+    public Duration getMaxHttpRetryElapsed() {
+        return maxRetryMaxElapsed;
+    }
+
+    public B setMaxHttpRetryElapsed(Duration maxRetryMaxElapsed) {
+        this.maxRetryMaxElapsed = maxRetryMaxElapsed;
         return self();
     }
 
@@ -94,9 +152,43 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         try {
             return new RemoteJwkSigningKeyResolver(
                             new URL(resolveKeysEndpoint(getIssuer())),
-                            new OkHttpClient(getConnectionTimeout(), getReadTimeout()));
+                            httpClient());
         } catch (MalformedURLException e) {
             throw new IllegalStateException("Invalid issuer URL in configuration");
         }
+    }
+
+    protected HttpClient httpClient() {
+        HttpClientConfiguration httpClientConfiguration = new HttpClientConfiguration();
+        httpClientConfiguration.setRequestAuthenticator(new DisabledAuthenticator());
+        httpClientConfiguration.setConnectionTimeout((int) getConnectionTimeout().getSeconds());
+        httpClientConfiguration.setRetryMaxAttempts(getMaxHttpRetryAttempts()); // number of retry attempts
+        httpClientConfiguration.setRetryMaxElapsed((int) getMaxHttpRetryElapsed().getSeconds()); // number of seconds
+        httpClientConfiguration.setProxyHost(getProxyHost());
+        httpClientConfiguration.setProxyPort(getProxyPort());
+        httpClientConfiguration.setProxyUsername(getProxyUsername());
+        httpClientConfiguration.setProxyPassword(getProxyPassword());
+        return new OktaCommonsHttpClient(httpClientConfiguration);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseVerifierBuilderSupport<?, ?> that = (BaseVerifierBuilderSupport<?, ?>) o;
+        return proxyPort == that.proxyPort &&
+                maxRetryAttempts == that.maxRetryAttempts &&
+                Objects.equals(issuer, that.issuer) &&
+                Objects.equals(leeway, that.leeway) &&
+                Objects.equals(connectionTimeout, that.connectionTimeout) &&
+                Objects.equals(proxyHost, that.proxyHost) &&
+                Objects.equals(proxyUsername, that.proxyUsername) &&
+                Objects.equals(proxyPassword, that.proxyPassword) &&
+                Objects.equals(maxRetryMaxElapsed, that.maxRetryMaxElapsed);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(issuer, leeway, connectionTimeout, proxyHost, proxyPort, proxyUsername, proxyPassword, maxRetryAttempts, maxRetryMaxElapsed);
     }
 }

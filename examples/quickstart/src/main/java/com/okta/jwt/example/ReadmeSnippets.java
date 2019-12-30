@@ -31,9 +31,10 @@ public class ReadmeSnippets {
     private void basicUsage() {
         AccessTokenVerifier jwtVerifier = JwtVerifiers.accessTokenVerifierBuilder()
             .setIssuer("https://{yourOktaDomain}/oauth2/default")
-            .setAudience("api://default")                // defaults to 'api://default'
-            .setConnectionTimeout(Duration.ofSeconds(1)) // defaults to 1s
-            .setReadTimeout(Duration.ofSeconds(1))       // defaults to 1s
+            .setAudience("api://default")                   // defaults to 'api://default'
+            .setConnectionTimeout(Duration.ofSeconds(1))    // defaults to 1s
+            .setMaxHttpRetryAttempts(3)                     // defaults to 3
+            .setMaxHttpRetryElapsed(Duration.ofSeconds(10)) // defaults to 10s
             .build();
     }
 }

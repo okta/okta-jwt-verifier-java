@@ -81,9 +81,19 @@
                 <version>${okta.commons.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.squareup.okhttp3</groupId>
-                <artifactId>okhttp</artifactId>
-                <version>${okhttp.version}</version>
+                <groupId>com.okta.commons</groupId>
+                <artifactId>okta-http-api</artifactId>
+                <version>${okta.commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.okta.commons</groupId>
+                <artifactId>okta-http-okhttp</artifactId>
+                <version>${okta.commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.okta.commons</groupId>
+                <artifactId>okta-http-okhttpclient</artifactId>
+                <version>${okta.commons.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
