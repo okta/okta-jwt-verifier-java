@@ -15,6 +15,9 @@
  */
 package com.okta.jwt;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 import java.time.Duration;
 
 /**
@@ -57,6 +60,30 @@ public interface VerifierBuilderSupport<B extends VerifierBuilderSupport, R> {
      * @return a reference to the current builder for use in method chaining
      */
     B setReadTimeout(Duration readTimeout);
+
+    /**
+     * Sets the {@code sslSocketFactory} for the verifier.
+     *
+     * @param sslSocketFactory ssl socket factory
+     * @return a reference to the current builder for use in method chaining
+     */
+    B setSslSocketFactory(SSLSocketFactory sslSocketFactory);
+
+    /**
+     * Sets the {@code trustManager} for the verifier.
+     *
+     * @param trustManager ssl trust manager
+     * @return a reference to the current builder for use in method chaining
+     */
+    B setTrustManager(X509TrustManager trustManager);
+
+    /**
+     * Sets the {@code hostnameVerifier} for the verifier.
+     *
+     * @param hostnameVerifier hostname verifier
+     * @return a reference to the current builder for use in method chaining
+     */
+    B setHostnameVerifier(HostnameVerifier hostnameVerifier);
 
     /**
      * Constructs a JWT Verifier.

@@ -20,6 +20,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -40,13 +43,27 @@ public class OkHttpClient implements HttpClient {
     private final okhttp3.OkHttpClient client;
 
     public OkHttpClient(Duration connectionTimeout, Duration readTimeout) {
+        this(connectionTimeout, readTimeout, null, null, null);
+    }
 
-        client = new okhttp3.OkHttpClient.Builder()
+    public OkHttpClient(Duration connectionTimeout, Duration readTimeout,
+                        SSLSocketFactory sslSocketFactory, X509TrustManager trustManager,
+                        HostnameVerifier hostnameVerifier) {
+
+        okhttp3.OkHttpClient.Builder clientBuilder = new okhttp3.OkHttpClient.Builder()
                 .connectTimeout(connectionTimeout.toMillis(), TimeUnit.MILLISECONDS)
                 .readTimeout(readTimeout.toMillis(), TimeUnit.MILLISECONDS)
                 .writeTimeout(readTimeout.toMillis(), TimeUnit.MILLISECONDS)
-                .retryOnConnectionFailure(true)
-                .build();
+                .retryOnConnectionFailure(true);
+
+        if (sslSocketFactory != null && trustManager != null) {
+            clientBuilder.sslSocketFactory(sslSocketFactory, trustManager);
+        }
+        if (hostnameVerifier != null) {
+            clientBuilder.hostnameVerifier(hostnameVerifier);
+        }
+
+        client = clientBuilder.build();
 
     }
 

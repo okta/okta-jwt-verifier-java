@@ -20,6 +20,9 @@ import com.okta.jwt.VerifierBuilderSupport;
 import com.okta.jwt.impl.http.OkHttpClient;
 import io.jsonwebtoken.SigningKeyResolver;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
@@ -30,6 +33,9 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
     private Duration leeway = Duration.ofMinutes(2);
     private Duration connectionTimeout = Duration.ofSeconds(1);
     private Duration readTimeout = Duration.ofSeconds(1);
+    private SSLSocketFactory sslSocketFactory = null;
+    private X509TrustManager trustManager = null;
+    private HostnameVerifier hostnameVerifier = null;
 
     String getIssuer() {
         return issuer;
@@ -75,6 +81,33 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         return self();
     }
 
+    SSLSocketFactory getSslSocketFactory () {
+        return sslSocketFactory;
+    }
+
+    public B setSslSocketFactory(SSLSocketFactory sslSocketFactory) {
+        this.sslSocketFactory = sslSocketFactory;
+        return self();
+    }
+
+    X509TrustManager getTrustManager () {
+        return trustManager;
+    }
+
+    public B setTrustManager(X509TrustManager trustManager) {
+        this.trustManager = trustManager;
+        return self();
+    }
+
+    HostnameVerifier getHostnameVerifier () {
+        return hostnameVerifier;
+    }
+
+    public B setHostnameVerifier(HostnameVerifier hostnameVerifier) {
+        this.hostnameVerifier = hostnameVerifier;
+        return self();
+    }
+
     @SuppressWarnings("unchecked")
     protected B self() {
         return (B) this;
@@ -94,7 +127,10 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         try {
             return new RemoteJwkSigningKeyResolver(
                             new URL(resolveKeysEndpoint(getIssuer())),
-                            new OkHttpClient(getConnectionTimeout(), getReadTimeout()));
+                            new OkHttpClient(
+                                    getConnectionTimeout(), getReadTimeout(),
+                                    getSslSocketFactory(), getTrustManager(),
+                                    getHostnameVerifier()));
         } catch (MalformedURLException e) {
             throw new IllegalStateException("Invalid issuer URL in configuration");
         }
