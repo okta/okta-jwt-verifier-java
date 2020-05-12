@@ -14,11 +14,11 @@ you an example of how to do this using Okta's JWT Validation library for Java.
 > If you are validating access tokens from a Spring application take a look at the [Okta Spring Boot Starter](https://github.com/okta/okta-spring-boot).
 
 ## Things you will need
-For validating a JWT, you will need a few different items:
+To validate a JWT, you will need a few different items:
 
 1. Your issuer URL
 2. The JWT string you want to verify
-3. The Okta JWT Verifier for Java library, for example in your Apache Maven pom.xml:
+3. The Okta JWT Verifier for Java library, for example in your Apache Maven `pom.xml`:
 
 ```xml
   <dependency>
@@ -37,7 +37,7 @@ For validating a JWT, you will need a few different items:
 
 # Setting up the Library
 
-The Okta JWT Verifier can created via a fluent `JwtVerifiers` class:
+The Okta JWT Verifier can created via the fluent `JwtVerifiers` class:
 
 [//]: # (NOTE: code snippets in this README are updated automatically via a Maven plugin by running: mvn okta-code-snippet:snip)
  
@@ -52,13 +52,13 @@ AccessTokenVerifier jwtVerifier = JwtVerifiers.accessTokenVerifierBuilder()
 ```
 [//]: # (end: basicUsage)
 
-This helper class configures a JWT parser with the details found via the [OpenID Connect discovery endpoint](https://openid.net/specs/openid-connect-discovery-1_0.html).  The public keys used to validate the JWTs will also be retrieved 
+This helper class configures a JWT parser with the details found through the [OpenID Connect discovery endpoint](https://openid.net/specs/openid-connect-discovery-1_0.html).  The public keys used to validate the JWTs will also be retrieved 
 and cached automatically.
 
 ## Validating a JWT
 
-After you have a `JwtVerifier` from above section and a `access_token` from a successful login, or from the `Bearer token` 
-in the authorization header, you will need to make sure that this is still valid. All you need to do is call the 
+After you have a `JwtVerifier` from the above section and an `access_token` from a successful sign in, or from a `Bearer token` 
+in the authorization header, you will need to make sure that it is still valid. All you need to do is call the 
 `decode` method (where `jwtString` is your access token in string format).
 
 ```java
