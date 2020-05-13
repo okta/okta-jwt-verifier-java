@@ -57,9 +57,9 @@ and cached automatically.
 
 ## Validating a JWT
 
-After you have a `JwtVerifier` from the above section and an `access_token` from a successful sign in, or from a `Bearer token` 
-in the authorization header, you will need to make sure that it is still valid. All you need to do is call the 
-`decode` method (where `jwtString` is your access token in string format).
+After you have a `JwtVerifier` from the above section and an `access_token` from a successful sign in, or 
+from a `Bearer token` in the authorization header, you will need to make sure that it is still valid. 
+All you need to do is call the `decode` method (where `jwtString` is your access token in string format).
 
 ```java
 Jwt jwt = jwtVerifier.decode(jwtString);
