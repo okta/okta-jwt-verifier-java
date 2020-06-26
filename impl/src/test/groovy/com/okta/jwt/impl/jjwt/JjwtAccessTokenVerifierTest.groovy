@@ -15,6 +15,7 @@
  */
 package com.okta.jwt.impl.jjwt
 
+import com.okta.commons.lang.Classes
 import com.okta.jwt.Jwt
 import com.okta.jwt.JwtVerificationException
 import com.okta.jwt.impl.TestUtil
@@ -22,7 +23,7 @@ import io.jsonwebtoken.JwtBuilder
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.SigningKeyResolver
 import io.jsonwebtoken.impl.DefaultClaims
-import io.jsonwebtoken.io.JacksonSerializer
+import io.jsonwebtoken.io.Serializer
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
@@ -87,7 +88,7 @@ class JjwtAccessTokenVerifierTest extends TokenVerifierTestSupport{
 
     @Override
     byte[] defaultFudgedBody() {
-        JacksonSerializer serializer = new JacksonSerializer()
+        Serializer serializer = Classes.loadFromService(Serializer)
         Instant now = Instant.now()
         def bodyMap = new DefaultClaims()
             .setIssuer(TEST_ISSUER)
