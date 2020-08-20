@@ -37,8 +37,8 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
     private int proxyPort;
     private String proxyUsername = null;
     private String proxyPassword = null;
-    private int maxRetryAttempts = 3;
-    private Duration maxRetryMaxElapsed = Duration.ofSeconds(10);
+    private int retryMaxAttempts = 2; /* based on SDK spec */
+    private Duration retryMaxElapsed = Duration.ofSeconds(10);
 
     String getIssuer() {
         return issuer;
@@ -115,21 +115,21 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         return self();
     }
 
-    public int getMaxHttpRetryAttempts() {
-        return maxRetryAttempts;
+    public int getRetryMaxAttempts() {
+        return retryMaxAttempts;
     }
 
-    public B setMaxHttpRetryAttempts(int maxRetryAttempts) {
-        this.maxRetryAttempts = maxRetryAttempts;
+    public B setRetryMaxAttempts(int retryMaxAttempts) {
+        this.retryMaxAttempts = retryMaxAttempts;
         return self();
     }
 
     public Duration getMaxHttpRetryElapsed() {
-        return maxRetryMaxElapsed;
+        return retryMaxElapsed;
     }
 
-    public B setMaxHttpRetryElapsed(Duration maxRetryMaxElapsed) {
-        this.maxRetryMaxElapsed = maxRetryMaxElapsed;
+    public B setRetryMaxElapsed(Duration retryMaxElapsed) {
+        this.retryMaxElapsed = retryMaxElapsed;
         return self();
     }
 
@@ -162,7 +162,7 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         HttpClientConfiguration httpClientConfiguration = new HttpClientConfiguration();
         httpClientConfiguration.setRequestAuthenticator(new DisabledAuthenticator());
         httpClientConfiguration.setConnectionTimeout((int) getConnectionTimeout().getSeconds());
-        httpClientConfiguration.setRetryMaxAttempts(getMaxHttpRetryAttempts()); // number of retry attempts
+        httpClientConfiguration.setRetryMaxAttempts(getRetryMaxAttempts()); // number of retry attempts
         httpClientConfiguration.setRetryMaxElapsed((int) getMaxHttpRetryElapsed().getSeconds()); // number of seconds
         httpClientConfiguration.setProxyHost(getProxyHost());
         httpClientConfiguration.setProxyPort(getProxyPort());
@@ -177,18 +177,18 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         if (o == null || getClass() != o.getClass()) return false;
         BaseVerifierBuilderSupport<?, ?> that = (BaseVerifierBuilderSupport<?, ?>) o;
         return proxyPort == that.proxyPort &&
-                maxRetryAttempts == that.maxRetryAttempts &&
+                retryMaxAttempts == that.retryMaxAttempts &&
                 Objects.equals(issuer, that.issuer) &&
                 Objects.equals(leeway, that.leeway) &&
                 Objects.equals(connectionTimeout, that.connectionTimeout) &&
                 Objects.equals(proxyHost, that.proxyHost) &&
                 Objects.equals(proxyUsername, that.proxyUsername) &&
                 Objects.equals(proxyPassword, that.proxyPassword) &&
-                Objects.equals(maxRetryMaxElapsed, that.maxRetryMaxElapsed);
+                Objects.equals(retryMaxElapsed, that.retryMaxElapsed);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(issuer, leeway, connectionTimeout, proxyHost, proxyPort, proxyUsername, proxyPassword, maxRetryAttempts, maxRetryMaxElapsed);
+        return Objects.hash(issuer, leeway, connectionTimeout, proxyHost, proxyPort, proxyUsername, proxyPassword, retryMaxAttempts, retryMaxElapsed);
     }
 }

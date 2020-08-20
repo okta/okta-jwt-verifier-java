@@ -83,20 +83,20 @@ public interface VerifierBuilderSupport<B extends VerifierBuilderSupport, R> {
     B setProxyPassword(String proxyPassword);
 
     /**
-     * Sets the {@code maxHttpRetryAttempts} the verifier will allow when making HTTP requests to the "keys" endpoint.
+     * Sets the {@code retryMaxAttempts} the verifier will allow when making HTTP requests to the "keys" endpoint.
      *
-     * @param maxHttpRetryAttempts The maximum number of times to retry HTTP requests
+     * @param retryMaxAttempts The maximum number of times to retry HTTP requests
      * @return a reference to the current builder for use in method chaining
      */
-    B setMaxHttpRetryAttempts(int maxHttpRetryAttempts);
+    B setRetryMaxAttempts(int retryMaxAttempts);
 
     /**
-     * Sets the {@code maxHttpRetryElapsed} the verifier will allow when making HTTP requests to the "keys" endpoint.
+     * Sets the {@code retryMaxElapsed} the verifier will allow when making HTTP requests to the "keys" endpoint.
      *
-     * @param maxHttpRetryElapsed the max duration for the total of HTTP request
+     * @param retryMaxElapsed the max duration for the total of HTTP request
      * @return a reference to the current builder for use in method chaining
      */
-    B setMaxHttpRetryElapsed(Duration maxHttpRetryElapsed);
+    B setRetryMaxElapsed(Duration retryMaxElapsed);
 
     /**
      * Constructs a JWT Verifier.

@@ -33,8 +33,8 @@ public class ReadmeSnippets {
             .setIssuer("https://{yourOktaDomain}/oauth2/default")
             .setAudience("api://default")                   // defaults to 'api://default'
             .setConnectionTimeout(Duration.ofSeconds(1))    // defaults to 1s
-            .setMaxHttpRetryAttempts(3)                     // defaults to 3
-            .setMaxHttpRetryElapsed(Duration.ofSeconds(10)) // defaults to 10s
+            .setRetryMaxAttempts(2)                     // defaults to 2
+            .setRetryMaxElapsed(Duration.ofSeconds(10)) // defaults to 10s
             .build();
     }
 }
