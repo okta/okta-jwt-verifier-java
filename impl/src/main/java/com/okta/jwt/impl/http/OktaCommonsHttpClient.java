@@ -31,6 +31,10 @@ public class OktaCommonsHttpClient implements HttpClient {
 
     private final RequestExecutor requestExecutor;
 
+    protected OktaCommonsHttpClient(RequestExecutor requestExecutor) {
+        this.requestExecutor = requestExecutor;
+    }
+
     public OktaCommonsHttpClient(HttpClientConfiguration httpClientConfiguration) {
         this.requestExecutor = createRequestExecutor(httpClientConfiguration);
     }
