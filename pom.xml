@@ -20,8 +20,7 @@
     <parent>
         <groupId>com.okta</groupId>
         <artifactId>okta-parent</artifactId>
-        <version>13</version>
-        <relativePath>../okta-java-parent</relativePath>
+        <version>17</version>
     </parent>
 
     <groupId>com.okta.jwt</groupId>
@@ -32,8 +31,9 @@
 
     <properties>
         <github.slug>okta/okta-jwt-verifier-java</github.slug>
-        <okhttp.version>3.11.0</okhttp.version>
-        <okta.commons.version>1.1.1</okta.commons.version>
+        <okhttp.version>3.14.9</okhttp.version>
+        <okta.commons.version>1.2.4</okta.commons.version>
+        <jjwt.version>0.11.2</jjwt.version>
     </properties>
 
     <modules>
@@ -46,6 +46,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.11.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
             <!-- project modules -->
             <dependency>
@@ -75,6 +82,16 @@
                 <version>${okta.commons.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.okta.commons</groupId>
+                <artifactId>okta-http-api</artifactId>
+                <version>${okta.commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.okta.commons</groupId>
+                <artifactId>okta-http-okhttp</artifactId>
+                <version>${okta.commons.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
                 <version>${okhttp.version}</version>
@@ -86,4 +103,17 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.okta</groupId>
+                    <artifactId>okta-code-snippet-maven-plugin</artifactId>
+                    <configuration>
+                        <sourceFile>examples/quickstart/src/main/java/com/okta/jwt/example/ReadmeSnippets.java</sourceFile>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

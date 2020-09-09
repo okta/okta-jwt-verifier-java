@@ -51,12 +51,52 @@ public interface VerifierBuilderSupport<B extends VerifierBuilderSupport, R> {
     B setConnectionTimeout(Duration connectionTimeout);
 
     /**
-     * Sets the {@code issuer} the verifier will expect.
+     * Sets the proxy host used for the configured HTTP proxy.
      *
-     * @param readTimeout connection timeout
+     * @param proxyHost the proxy host used for the configured HTTP proxy
      * @return a reference to the current builder for use in method chaining
      */
-    B setReadTimeout(Duration readTimeout);
+    B setProxyHost(String proxyHost);
+
+    /**
+     * Sets the proxy port used for the configured HTTP proxy.
+     *
+     * @param proxyPort the proxy port used for the configured HTTP proxy
+     * @return a reference to the current builder for use in method chaining
+     */
+    B setProxyPort(int proxyPort);
+
+    /**
+     * Sets the proxy username used for the configured HTTP proxy.
+     *
+     * @param proxyUsername the proxy username used for the configured HTTP proxy
+     * @return a reference to the current builder for use in method chaining
+     */
+    B setProxyUsername(String proxyUsername);
+
+    /**
+     * Sets the proxy password used for the configured HTTP proxy.
+     *
+     * @param proxyPassword the proxy password used for the configured HTTP proxy
+     * @return a reference to the current builder for use in method chaining
+     */
+    B setProxyPassword(String proxyPassword);
+
+    /**
+     * Sets the {@code retryMaxAttempts} the verifier will allow when making HTTP requests to the "keys" endpoint.
+     *
+     * @param retryMaxAttempts The maximum number of times to retry HTTP requests
+     * @return a reference to the current builder for use in method chaining
+     */
+    B setRetryMaxAttempts(int retryMaxAttempts);
+
+    /**
+     * Sets the {@code retryMaxElapsed} the verifier will allow when making HTTP requests to the "keys" endpoint.
+     *
+     * @param retryMaxElapsed the max duration for the total of HTTP request
+     * @return a reference to the current builder for use in method chaining
+     */
+    B setRetryMaxElapsed(Duration retryMaxElapsed);
 
     /**
      * Constructs a JWT Verifier.

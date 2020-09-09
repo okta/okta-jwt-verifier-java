@@ -1,4 +1,4 @@
-[<img src="https://devforum.okta.com/uploads/oktadev/original/1X/bf54a16b5fda189e4ad2706fb57cbb7a1e5b8deb.png" align="right" width="256px"/>](https://devforum.okta.com/)
+[<img src="https://aws1.discourse-cdn.com/standard14/uploads/oktadev/original/1X/0c6402653dfb70edc661d4976a43a46f33e5e919.png" align="right" width="256px"/>](https://devforum.okta.com/)
 [![Maven Central](https://img.shields.io/maven-central/v/com.okta.jwt/okta-jwt-verifier.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.okta.jwt%22%20a%3A%22okta-jwt-verifier%22)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Support](https://img.shields.io/badge/support-Developer%20Forum-blue.svg)](https://devforum.okta.com/)
@@ -14,11 +14,11 @@ you an example of how to do this using Okta's JWT Validation library for Java.
 > If you are validating access tokens from a Spring application take a look at the [Okta Spring Boot Starter](https://github.com/okta/okta-spring-boot).
 
 ## Things you will need
-For validating a JWT, you will need a few different items:
+To validate a JWT, you will need a few different items:
 
 1. Your issuer URL
 2. The JWT string you want to verify
-3. The Okta JWT Verifier for Java library, for example in your Apache Maven pom.xml:
+3. The Okta JWT Verifier for Java library, for example in your Apache Maven `pom.xml`:
 
 ```xml
   <dependency>
@@ -37,25 +37,30 @@ For validating a JWT, you will need a few different items:
 
 # Setting up the Library
 
-The Okta JWT Verifier can created via a fluent `JwtHelper` class:
+The Okta JWT Verifier can created via the fluent `JwtVerifiers` class:
 
+[//]: # (NOTE: code snippets in this README are updated automatically via a Maven plugin by running: mvn okta-code-snippet:snip)
+ 
+[//]: # (method: basicUsage)
 ```java
 AccessTokenVerifier jwtVerifier = JwtVerifiers.accessTokenVerifierBuilder()
-      .setIssuer("https://{yourOktaDomain}/oauth2/default")
-      .setAudience("api://default")      // defaults to 'api://default'
-      .setConnectionTimeout(1000) // defaults to 1000ms
-      .setReadTimeout(1000)       // defaults to 1000ms
-      .build();
+    .setIssuer("https://{yourOktaDomain}/oauth2/default")
+    .setAudience("api://default")                   // defaults to 'api://default'
+    .setConnectionTimeout(Duration.ofSeconds(1))    // defaults to 1s
+    .setRetryMaxAttempts(2)                     // defaults to 2
+    .setRetryMaxElapsed(Duration.ofSeconds(10)) // defaults to 10s
+    .build();
 ```
+[//]: # (end: basicUsage)
 
-This helper class configures a JWT parser with the details found via the [OpenID Connect discovery endpoint](https://openid.net/specs/openid-connect-discovery-1_0.html).  The public keys used to validate the JWTs will also be retrieved 
+This helper class configures a JWT parser with the details found through the [OpenID Connect discovery endpoint](https://developer.okta.com/docs/reference/api/oidc/#well-known-openid-configuration).  The public keys used to validate the JWTs will also be retrieved 
 and cached automatically.
 
 ## Validating a JWT
 
-After you have a `JwtVerifier` from above section and a `access_token` from a successful login, or from the `Bearer token` 
-in the authorization header, you will need to make sure that this is still valid. All you need to do is call the 
-`decode` method (where `jwtString` is your access token in string format).
+After you have a `JwtVerifier` from the above section and an `access_token` from a successful sign in, or 
+from a `Bearer token` in the authorization header, you will need to make sure that it is still valid. 
+All you need to do is call the `decode` method (where `jwtString` is your access token in string format).
 
 ```java
 Jwt jwt = jwtVerifier.decode(jwtString);
@@ -63,10 +68,10 @@ Jwt jwt = jwtVerifier.decode(jwtString);
 
 This will validate your JWT for the following:
 
-- Token expiration date
-- Valid token not before date
-- The token issuer matches the expected value passed into the above helper
-- The token audience matches the expected value passed into the above helper
+- token expiration time
+- the time it was issue at
+- that the token issuer matches the expected value passed into the above helper
+- that the token audience matches the expected value passed into the above helper
 
 The result from the decode method is a `Jwt` object which you can introspect additional claims by calling:
 

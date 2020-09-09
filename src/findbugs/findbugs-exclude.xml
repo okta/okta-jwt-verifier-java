@@ -15,4 +15,7 @@
   -->
 <FindBugsFilter>
 
+    <!-- ReadmeSnippets is formatted as an example, so there is dead code -->
+    <Match><Class name="com.okta.jwt.example.ReadmeSnippets"/></Match>
+
 </FindBugsFilter>

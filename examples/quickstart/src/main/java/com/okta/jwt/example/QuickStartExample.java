@@ -40,7 +40,6 @@ public class QuickStartExample {
                                     .setIssuer(issuerUrl)
                                     .setAudience(audience)
                                     .setConnectionTimeout(Duration.ofSeconds(1)) // defaults to 1000ms
-                                    .setReadTimeout(Duration.ofSeconds(1))       // defaults to 1000ms
                                     .build();
 
         // 2. Process the token (includes validation)
