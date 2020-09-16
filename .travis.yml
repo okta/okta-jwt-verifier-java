@@ -23,6 +23,11 @@ after_success:
 - bash <(curl -s https://codecov.io/bash) -f verifier/target/site/jacoco/jacoco.xml
 
 deploy:
+- provider: script
+  script: ./mvnw snyk:monitor
+  on:
+    jdk: openjdk8
+    branch: master
 - provider: pages
   skip_cleanup: true
   github_token: $GH_API_KEY
@@ -30,6 +35,6 @@ deploy:
   email: developers@okta.com
   name: Travis CI - Auto Doc Build
   on:
-    jdk: oraclejdk8
+    jdk: openjdk8
     branch: master
     condition: "$TRAVIS_EVENT_TYPE != cron"
