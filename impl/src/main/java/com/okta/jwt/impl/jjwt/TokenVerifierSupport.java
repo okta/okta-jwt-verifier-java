@@ -41,7 +41,7 @@ abstract class TokenVerifierSupport {
                          SigningKeyResolver signingKeyResolver) {
         this.issuer = issuer;
         this.leeway = leeway;
-        this.keyResolver = signingKeyResolver;
+        this.keyResolver = new IssuerMatchingSigningKeyResolver(issuer, signingKeyResolver);
     }
 
     protected JwtParser parser() {
