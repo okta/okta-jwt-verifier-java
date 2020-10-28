@@ -88,3 +88,8 @@ For more information on this project take a look at the following resources:
 - [Javadocs](https://developer.okta.com/okta-jwt-verifier-java/apidocs/)
 - [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.okta.jwt%22%20a%3A%22okta-jwt-verifier%22)
 - [Working With OAuth 2.0 Tokens](https://developer.okta.com/authentication-guide/tokens/)
+
+# Android
+
+Okta JWT Verifier works with Android API 26+. If you have a use case for using this on Android and require 
+compatibility with older Android versions please open an issue. 
