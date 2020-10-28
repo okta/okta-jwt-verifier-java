@@ -91,5 +91,31 @@ For more information on this project take a look at the following resources:
 
 # Android
 
-Okta JWT Verifier works with Android API 26+. If you have a use case for using this on Android and require 
-compatibility with older Android versions please open an issue. 
+Okta JWT Verifier works with Android API 26+. If you have a use case for using this on Android and require compatibility with older Android versions please open an issue.
+
+[Java 8 library desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) may be required as Okta JWT Verifier makes use of java 8 features. See the link, or the below example on how to configure it.
+
+```
+android {
+  defaultConfig {
+    // Required when setting minSdkVersion to 20 or lower
+    multiDexEnabled true
+  }
+
+  compileOptions {
+    // Flag to enable support for the new language APIs
+    coreLibraryDesugaringEnabled true
+    // Sets Java compatibility to Java 8
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+  // For Kotlin projects
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
+}
+
+dependencies {
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
+}
+```
