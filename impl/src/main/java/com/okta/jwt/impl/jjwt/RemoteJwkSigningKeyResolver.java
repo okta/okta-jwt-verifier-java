@@ -23,6 +23,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.SigningKeyResolver;
+import io.jsonwebtoken.io.Decoders;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -32,7 +33,6 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -97,6 +97,6 @@ final class RemoteJwkSigningKeyResolver implements SigningKeyResolver {
     }
 
     private BigInteger base64ToBigInteger(String value) {
-        return new BigInteger(1, Base64.getUrlDecoder().decode(value));
+        return new BigInteger(1, Decoders.BASE64URL.decode(value));
     }
 }
