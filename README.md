@@ -88,3 +88,34 @@ For more information on this project take a look at the following resources:
 - [Javadocs](https://developer.okta.com/okta-jwt-verifier-java/apidocs/)
 - [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.okta.jwt%22%20a%3A%22okta-jwt-verifier%22)
 - [Working With OAuth 2.0 Tokens](https://developer.okta.com/authentication-guide/tokens/)
+
+# Android
+
+Okta JWT Verifier works with Android API 21+.
+
+[Java 8 library desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) may be required as Okta JWT Verifier makes use of java 8 features. See the link, or the example below on how to configure it.
+
+```
+android {
+  defaultConfig {
+    // Required when setting minSdkVersion to 20 or lower
+    multiDexEnabled true
+  }
+
+  compileOptions {
+    // Flag to enable support for the new language APIs
+    coreLibraryDesugaringEnabled true
+    // Sets Java compatibility to Java 8
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+  // For Kotlin projects
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
+}
+
+dependencies {
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
+}
+```
