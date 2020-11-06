@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.notNullValue
 import static org.junit.Assert.assertThat
 
 
-class AccessTokenVerifierIT extends TokenVerifierITSupport {
+class AccessTokenVerifierIT extends KeyServerITSupport {
 
     @Test
     void keyRotateTest() {

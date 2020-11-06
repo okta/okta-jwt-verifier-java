@@ -16,18 +16,26 @@
 package com.okta.jwt.impl.http;
 
 import com.okta.commons.http.DefaultRequest;
+import com.okta.commons.http.HttpHeaders;
 import com.okta.commons.http.HttpMethod;
 import com.okta.commons.http.RequestExecutor;
 import com.okta.commons.http.RequestExecutorFactory;
 import com.okta.commons.http.Response;
 import com.okta.commons.http.config.HttpClientConfiguration;
+import com.okta.commons.lang.ApplicationInfo;
 import com.okta.commons.lang.Classes;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.stream.Collectors;
+
+import static com.okta.commons.http.HttpHeaders.USER_AGENT;
 
 public class OktaCommonsHttpClient implements HttpClient {
+    private static final String USER_AGENT_VALUE = ApplicationInfo.get().entrySet().stream()
+            .map(entry -> entry.getKey() + "/" + entry.getValue())
+            .collect(Collectors.joining(" "));
 
     private final RequestExecutor requestExecutor;
 
@@ -41,10 +49,12 @@ public class OktaCommonsHttpClient implements HttpClient {
 
     @Override
     public InputStream get(URL url) throws IOException {
-        Response response = requestExecutor.executeRequest(new DefaultRequest(HttpMethod.GET, url.toExternalForm()));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(USER_AGENT, USER_AGENT_VALUE);
+        Response response = requestExecutor.executeRequest(new DefaultRequest(HttpMethod.GET, url.toExternalForm(), null, headers));
 
-        if (response.getHttpStatus() != 200 ) {
-            throw new IOException("GET request to '" + url + "' failed with status of: "+ response.getHttpStatus());
+        if (response.getHttpStatus() != 200) {
+            throw new IOException("GET request to '" + url + "' failed with status of: " + response.getHttpStatus());
         }
         return response.getBody();
     }
