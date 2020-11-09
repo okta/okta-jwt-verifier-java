@@ -19,6 +19,7 @@ import com.okta.jwt.AccessTokenVerifier
 import com.okta.jwt.JwtVerifiers
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import okhttp3.mockwebserver.RecordedRequest
 import org.testng.annotations.Test
 
 import java.time.Instant
@@ -26,22 +27,20 @@ import java.time.temporal.ChronoUnit
 
 import static org.hamcrest.Matchers.is
 import static org.hamcrest.Matchers.notNullValue
+import static org.hamcrest.Matchers.containsString
+import static org.hamcrest.Matchers.allOf
 import static org.junit.Assert.assertThat
 
-
-class AccessTokenVerifierIT extends KeyServerITSupport {
-
+class UserAgentIT extends KeyServerITSupport {
     @Test
-    void keyRotateTest() {
-
+    void userAgentIsProperlySetTest() {
         def server = createMockServer()
         def url = server.url("/oauth2/default").url()
 
         stubKeyResponse(server, TEST_PUB_KEY_ID_1, TEST_KEY_PAIR_1.getPublic())
-        stubKeyResponse(server, TEST_PUB_KEY_ID_2, TEST_KEY_PAIR_2.getPublic())
 
         Instant now = Instant.now()
-        String token1 = Jwts.builder()
+        String token = Jwts.builder()
                 .setAudience("api://default")
                 .setSubject("joe.coder@example.com")
                 .setIssuer(url.toExternalForm())
@@ -49,34 +48,22 @@ class AccessTokenVerifierIT extends KeyServerITSupport {
                 .setNotBefore(Date.from(now))
                 .setExpiration(Date.from(now.plus(1L, ChronoUnit.HOURS)))
                 .setHeader(Jwts.jwsHeader()
-                    .setKeyId(TEST_PUB_KEY_ID_1))
+                        .setKeyId(TEST_PUB_KEY_ID_1))
                 .signWith(TEST_KEY_PAIR_1.getPrivate(), SignatureAlgorithm.RS256)
                 .compact()
 
-            String token2 = Jwts.builder()
-                .setAudience("api://default")
-                .setSubject("joe.coder@example.com")
-                .setIssuer(url.toExternalForm())
-                .setIssuedAt(Date.from(now))
-                .setNotBefore(Date.from(now))
-                .setExpiration(Date.from(now.plus(1L, ChronoUnit.HOURS)))
-                .setHeader(Jwts.jwsHeader()
-                    .setKeyId(TEST_PUB_KEY_ID_2))
-                .signWith(TEST_KEY_PAIR_2.getPrivate(), SignatureAlgorithm.RS256)
-                .compact()
-
         try {
-
             AccessTokenVerifier verifier = JwtVerifiers.accessTokenVerifierBuilder()
                     .setIssuer(url.toExternalForm())
                     .build()
 
-            assertThat verifier.decode(token1), notNullValue()
-            assertThat server.takeRequest().getPath(), is("/oauth2/default/v1/keys")
-
-            assertThat verifier.decode(token2), notNullValue()
-            assertThat server.takeRequest().getPath(), is("/oauth2/default/v1/keys")
-
+            assertThat verifier.decode(token), notNullValue()
+            RecordedRequest request = server.takeRequest()
+            assertThat request.getPath(), is("/oauth2/default/v1/keys")
+            assertThat request.headers.get("User-Agent"), allOf(
+                    containsString("okta-jwt-verifier-java/"),
+                    containsString("java/${System.getProperty("java.version")}"),
+                    containsString("${System.getProperty("os.name")}/${System.getProperty("os.version")}"))
         } finally {
             server.shutdown()
         }

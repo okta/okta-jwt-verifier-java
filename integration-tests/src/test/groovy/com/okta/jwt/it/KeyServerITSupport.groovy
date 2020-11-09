@@ -32,7 +32,7 @@ import java.security.SecureRandom
 
 import static java.lang.Thread.currentThread
 
-class TokenVerifierITSupport {
+class KeyServerITSupport {
 
     public final static String TEST_PUB_KEY_ID_1 = "TEST_PUB_KEY_ID_1"
     public final static KeyPair TEST_KEY_PAIR_1 = ItUtil.generateRsaKeyPair(2048)
@@ -90,5 +90,4 @@ class TokenVerifierITSupport {
             new SecureRandom())
         return sslContext
     }
-
 }
