@@ -42,7 +42,7 @@ final class RemoteJwkSigningKeyResolver implements SigningKeyResolver {
     private final URL jwkUri;
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final Map<String, Key> keyMap = new HashMap<>();
+    private Map<String, Key> keyMap = new HashMap<>();
 
     RemoteJwkSigningKeyResolver(URL jwkUri, HttpClient httpClient) {
         this.jwkUri = jwkUri;
@@ -88,8 +88,7 @@ final class RemoteJwkSigningKeyResolver implements SigningKeyResolver {
                     }
                }));
 
-            keyMap.clear();
-            keyMap.putAll(newKeys);
+            keyMap = newKeys;
 
         } catch (IOException e) {
             throw new JwtException("Failed to fetch keys from URL: " + jwkUri, e);
