@@ -33,6 +33,7 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,6 +43,7 @@ final class RemoteJwkSigningKeyResolver implements SigningKeyResolver {
     private final URL jwkUri;
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Object lock = new Object();
     private Map<String, Key> keyMap = new HashMap<>();
 
     RemoteJwkSigningKeyResolver(URL jwkUri, HttpClient httpClient) {
@@ -61,13 +63,24 @@ final class RemoteJwkSigningKeyResolver implements SigningKeyResolver {
 
     private Key getKey(String keyId) {
 
+        // check non synchronized to avoid a lock
         Key result = keyMap.get(keyId);
         if (result != null) {
             return result;
         }
 
-        updateKeys();
-        return keyMap.get(keyId);
+        synchronized (lock) {
+            // once synchronized, check the map once again the a previously
+            // synchronized thread could have already updated they keys
+            result = keyMap.get(keyId);
+            if (result != null) {
+                return result;
+            }
+
+            // finally, fallback to updating the keys, an return a value (or null)
+            updateKeys();
+            return keyMap.get(keyId);
+        }
     }
 
     private void updateKeys() {
@@ -88,7 +101,7 @@ final class RemoteJwkSigningKeyResolver implements SigningKeyResolver {
                     }
                }));
 
-            keyMap = newKeys;
+            keyMap = Collections.unmodifiableMap(newKeys);
 
         } catch (IOException e) {
             throw new JwtException("Failed to fetch keys from URL: " + jwkUri, e);
