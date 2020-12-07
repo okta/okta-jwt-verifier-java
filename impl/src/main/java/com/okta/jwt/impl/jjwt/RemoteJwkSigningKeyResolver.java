@@ -44,7 +44,7 @@ final class RemoteJwkSigningKeyResolver implements SigningKeyResolver {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final Object lock = new Object();
-    private Map<String, Key> keyMap = new HashMap<>();
+    private volatile Map<String, Key> keyMap = new HashMap<>();
 
     RemoteJwkSigningKeyResolver(URL jwkUri, HttpClient httpClient) {
         this.jwkUri = jwkUri;
