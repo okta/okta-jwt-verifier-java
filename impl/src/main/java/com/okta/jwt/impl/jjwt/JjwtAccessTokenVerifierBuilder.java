@@ -46,6 +46,10 @@ public final class JjwtAccessTokenVerifierBuilder extends BaseVerifierBuilderSup
         if (!getIssuer().matches(".*/oauth2/.*")) {
             log.warn("Decoding access tokens from this issuer '{}' may not be possible. Your issuer URL should be in the format of 'https://{yourOktaDomain}/oauth2/qualifier'", getIssuer());
         }
+
+        if (getConnectionTimeout().isNegative()) {
+            throw new IllegalArgumentException("timeout cannot be < 0");
+        }
     }
 
     @Override
