@@ -35,6 +35,7 @@ abstract class TokenVerifierSupport {
     private final SigningKeyResolver keyResolver;
     private final String issuer;
     private final Duration leeway;
+    private final JwtParser jwtParser;
 
     TokenVerifierSupport(String issuer,
                          Duration leeway,
@@ -42,9 +43,10 @@ abstract class TokenVerifierSupport {
         this.issuer = issuer;
         this.leeway = leeway;
         this.keyResolver = new IssuerMatchingSigningKeyResolver(issuer, signingKeyResolver);
+        this.jwtParser = buildJwtParser();
     }
 
-    protected JwtParser parser() {
+    protected JwtParser buildJwtParser() {
          return Jwts.parserBuilder()
                 .setSigningKeyResolver(keyResolver)
                 .requireIssuer(issuer)
@@ -79,6 +81,10 @@ abstract class TokenVerifierSupport {
 
     Duration getLeeway() {
         return leeway;
+    }
+
+    JwtParser getJwtParser() {
+        return jwtParser;
     }
 
     static class OktaJwtHandler extends JwtHandlerAdapter<Jws<Claims>> {

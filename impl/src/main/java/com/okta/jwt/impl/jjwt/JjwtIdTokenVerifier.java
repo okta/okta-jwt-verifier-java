@@ -44,7 +44,7 @@ public class JjwtIdTokenVerifier extends TokenVerifierSupport
 
     @Override
     public Jwt decode(String idToken, String nonce) throws JwtVerificationException {
-       return decode(idToken, parser(), ClaimsValidator.compositeClaimsValidator(
+       return decode(idToken, getJwtParser(), ClaimsValidator.compositeClaimsValidator(
                new ClaimsValidator.ContainsAudienceClaimsValidator(clientId),
                jws -> {
                    String actualNonce = jws.getBody().get("nonce", String.class);
