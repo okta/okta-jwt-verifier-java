@@ -45,10 +45,11 @@ abstract class TokenVerifierSupport {
     }
 
     protected JwtParser parser() {
-         return Jwts.parser()
+         return Jwts.parserBuilder()
                 .setSigningKeyResolver(keyResolver)
                 .requireIssuer(issuer)
-                .setAllowedClockSkewSeconds(leeway.getSeconds());
+                .setAllowedClockSkewSeconds(leeway.getSeconds())
+                .build();
     }
 
     protected Jwt decode(String token, JwtParser parser, ClaimsValidator claimsValidator) throws JwtVerificationException {
