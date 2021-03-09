@@ -42,6 +42,6 @@ public class JjwtAccessTokenVerifier extends TokenVerifierSupport
 
     @Override
     public Jwt decode(String accessToken) throws JwtVerificationException {
-        return decode(accessToken, getJwtParser(), new ClaimsValidator.ContainsAudienceClaimsValidator(audience));
+        return decode(accessToken, parser(), new ClaimsValidator.ContainsAudienceClaimsValidator(audience));
     }
 }

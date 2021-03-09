@@ -83,7 +83,7 @@ abstract class TokenVerifierSupport {
         return leeway;
     }
 
-    JwtParser getJwtParser() {
+    JwtParser parser() {
         return jwtParser;
     }
 
