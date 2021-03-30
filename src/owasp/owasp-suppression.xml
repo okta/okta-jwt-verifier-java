@@ -39,4 +39,23 @@
         <gav regex="true">^org\.slf4j:jcl-over-slf4j:.*$</gav>
         <cve>CVE-2018-8088</cve>
     </suppress>
+
+    <!-- false positive - see https://github.com/jeremylong/DependencyCheck/issues/3133 
+
+     https://nvd.nist.gov/vuln/detail/CVE-2020-15824
+     https://nvd.nist.gov/vuln/detail/CVE-2020-29582
+    -->
+    <suppress>
+        <notes><![CDATA[ file name: kotlin-stdlib-1.4.10.jar]]></notes>
+        <gav regex="true">^org\.jetbrains\.kotlin:kotlin-stdlib:.*$</gav>
+        <cve>CVE-2020-29582</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[ file name: kotlin-stdlib-common-1.4.0.jar]]></notes>
+        <gav regex="true">^org\.jetbrains\.kotlin:kotlin-stdlib-common:.*$</gav>
+        <cve>CVE-2020-15824</cve>
+        <cve>CVE-2020-29582</cve>
+    </suppress>
+
+    
 </suppressions>
