@@ -16,6 +16,7 @@
 package com.okta.jwt.example;
 
 import com.okta.jwt.AccessTokenVerifier;
+import com.okta.jwt.IdTokenVerifier;
 import com.okta.jwt.Jwt;
 import com.okta.jwt.JwtVerifiers;
 
@@ -33,6 +34,9 @@ public class QuickStartExample {
         String issuerUrl = args[0];
         String audience  = args[1];
         String jwtString = args[2];
+        String clientId  = args[3];
+        String idTokenString = args[4];
+        String nonce = args[5];
 
 
         // 1. build the parser
@@ -50,5 +54,24 @@ public class QuickStartExample {
         System.out.println(jwt.getClaims().get("invalidKey")); // an invalid key just returns null
         System.out.println(jwt.getClaims().get("groups")); // handle an array value
         System.out.println(jwt.getExpiresAt()); // print the expiration time
+        
+        
+        // To decode IdToken - nonce is required. It will be available as a cookie if you have used Okta SignIn Widget.
+        // For others, please check the nonce value sent in auth request and ensure, it is available as in request.
+         IdTokenVerifier idTokenVerifier = JwtVerifiers.idTokenVerifierBuilder()
+        		.setIssuer(issuerUrl)
+        		.setClientId(clientId)
+        		.setConnectionTimeout(Duration.ofSeconds(1))
+        		.build();
+        
+        Jwt idJwt = idTokenVerifier.decode(idTokenString, nonce);
+        	
+        System.out.println(idJwt.getTokenValue()); // print the token
+        System.out.println(idJwt.getClaims().get("invalidKey")); // an invalid key just returns null
+        System.out.println(idJwt.getClaims().get("nonce").equals(nonce));
+        System.out.println(idJwt.getExpiresAt()); // print the expiration time
+        
+  
+        
     }
 }
