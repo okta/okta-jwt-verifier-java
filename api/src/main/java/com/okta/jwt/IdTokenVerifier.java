@@ -22,8 +22,7 @@ public interface IdTokenVerifier {
      * Validates the given {@code idToken}.  Validates this token is valid Okta id token that has not expired.
      *
      * @param idToken string JWT id token to validate
-     * @param nonce ID Token nonce - nullable - it may be available as a cookie when Okta SigIn Widget is used.
-     * Always check the request if it contains nonce.
+     * @param nonce ID Token nonce - nullable
      * @return a decoded JWT
      * @throws JwtVerificationException when parsing or validation errors occur
      */
