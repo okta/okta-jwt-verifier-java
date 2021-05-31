@@ -57,7 +57,7 @@ public class QuickStartExample {
         
         
         // To decode IdToken - nonce is required. It will be available as a cookie if you have used Okta SignIn Widget.
-        // For others, please check the nonce value sent in auth request and ensure, it is available as in request.
+        // For others, please check the nonce value sent in request.
          IdTokenVerifier idTokenVerifier = JwtVerifiers.idTokenVerifierBuilder()
         		.setIssuer(issuerUrl)
         		.setClientId(clientId)
