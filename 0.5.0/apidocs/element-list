@@ -1,0 +1,6 @@
+com.okta.jwt
+com.okta.jwt.example
+com.okta.jwt.impl
+com.okta.jwt.impl.http
+com.okta.jwt.impl.jjwt
+com.okta.jwt.impl.jjwt.models
