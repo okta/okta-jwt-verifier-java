@@ -131,6 +131,7 @@ abstract class TokenVerifierTestSupport {
             decodeToken(token)
         }
     }
+
     @Test
     void nullAudienceTest() {
         expect JwtVerificationException, {
