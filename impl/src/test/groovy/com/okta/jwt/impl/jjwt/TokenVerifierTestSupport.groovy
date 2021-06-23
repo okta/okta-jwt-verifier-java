@@ -124,6 +124,14 @@ abstract class TokenVerifierTestSupport {
     }
 
     @Test
+    void noneAlgoTest() {
+        def token = buildJwtWithFudgedHeader('{"alg": "none"}')
+
+        expect JwtVerificationException, {
+            decodeToken(token)
+        }
+    }
+    @Test
     void nullAudienceTest() {
         expect JwtVerificationException, {
             buildThenDecodeToken(baseJwtBuilder()
