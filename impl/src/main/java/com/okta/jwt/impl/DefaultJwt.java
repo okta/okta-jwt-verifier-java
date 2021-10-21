@@ -35,9 +35,17 @@ public class DefaultJwt implements Jwt {
 
     private final String tokenValue;
     private final Map<String, Object> claims;
-    private Instant issuedAt;
-    private Instant expiresAt;
+    private final Instant issuedAt;
+    private final Instant expiresAt;
 
+    /**
+     * Creates an instance based on input from an already parsed and validated JWT.
+     * @param tokenValue Original JWT string
+     * @param issuedAt The value from the {@code iat} claim, as an {@link Instant}
+     * @param expiresAt The value from the {@code exp} claim, as an {@link Instant}
+     * @param claims A map of the original claim values in the JWT
+     * @see com.okta.jwt.impl.jjwt.TokenVerifierSupport for actual JWT parsing logic.
+     */
     public DefaultJwt(String tokenValue,
                       Instant issuedAt,
                       Instant expiresAt,
