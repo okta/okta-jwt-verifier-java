@@ -44,7 +44,6 @@ public class DefaultJwt implements Jwt {
      * @param issuedAt The value from the {@code iat} claim, as an {@link Instant}
      * @param expiresAt The value from the {@code exp} claim, as an {@link Instant}
      * @param claims A map of the original claim values in the JWT
-     * @see com.okta.jwt.impl.jjwt.TokenVerifierSupport for actual JWT parsing logic.
      */
     public DefaultJwt(String tokenValue,
                       Instant issuedAt,
