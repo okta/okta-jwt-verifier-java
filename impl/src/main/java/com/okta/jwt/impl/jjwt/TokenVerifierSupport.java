@@ -28,7 +28,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SigningKeyResolver;
 import io.jsonwebtoken.UnsupportedJwtException;
 
+import java.time.Clock;
 import java.time.Duration;
+import java.util.Date;
 
 abstract class TokenVerifierSupport {
 
@@ -36,6 +38,7 @@ abstract class TokenVerifierSupport {
     private final String issuer;
     private final Duration leeway;
     private final JwtParser jwtParser;
+    private final Clock clock;
 
     TokenVerifierSupport(String issuer,
                          Duration leeway,
@@ -43,14 +46,28 @@ abstract class TokenVerifierSupport {
         this.issuer = issuer;
         this.leeway = leeway;
         this.keyResolver = new IssuerMatchingSigningKeyResolver(issuer, signingKeyResolver);
+        this.clock = Clock.systemDefaultZone();
+        this.jwtParser = buildJwtParser();
+    }
+
+    TokenVerifierSupport(String issuer,
+                         Duration leeway,
+                         SigningKeyResolver signingKeyResolver,
+                         Clock clock) {
+        this.issuer = issuer;
+        this.leeway = leeway;
+        this.keyResolver = new IssuerMatchingSigningKeyResolver(issuer, signingKeyResolver);
+        this.clock = clock;
         this.jwtParser = buildJwtParser();
     }
 
     protected JwtParser buildJwtParser() {
-         return Jwts.parserBuilder()
+        io.jsonwebtoken.Clock jwtClock = () -> Date.from(clock.instant());
+        return Jwts.parserBuilder()
                 .setSigningKeyResolver(keyResolver)
                 .requireIssuer(issuer)
                 .setAllowedClockSkewSeconds(leeway.getSeconds())
+                .setClock(jwtClock)
                 .build();
     }
 

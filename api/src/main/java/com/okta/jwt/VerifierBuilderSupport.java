@@ -15,6 +15,7 @@
  */
 package com.okta.jwt;
 
+import java.time.Clock;
 import java.time.Duration;
 
 /**
@@ -97,6 +98,14 @@ public interface VerifierBuilderSupport<B extends VerifierBuilderSupport, R> {
      * @return a reference to the current builder for use in method chaining
      */
     B setRetryMaxElapsed(Duration retryMaxElapsed);
+
+    /**
+     * Sets the {@code clock} the verifier will use for evaluating token expiration.
+     *
+     * @param clock specify an alternate clock, such as fixed or offset to be used during testing
+     * @return a reference to the current builder for use in method chaining
+     */
+    B setClock(Clock clock);
 
     /**
      * Constructs a JWT Verifier.
