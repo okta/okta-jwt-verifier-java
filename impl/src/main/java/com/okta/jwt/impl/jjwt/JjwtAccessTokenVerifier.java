@@ -20,6 +20,7 @@ import com.okta.jwt.Jwt;
 import com.okta.jwt.JwtVerificationException;
 import io.jsonwebtoken.SigningKeyResolver;
 
+import java.time.Clock;
 import java.time.Duration;
 
 /**
@@ -36,7 +37,17 @@ public class JjwtAccessTokenVerifier extends TokenVerifierSupport
                                    Duration leeway,
                                    SigningKeyResolver signingKeyResolver) {
 
-        super(issuer, leeway, signingKeyResolver);
+        super(issuer, leeway, signingKeyResolver, Clock.systemDefaultZone());
+        this.audience = audience;
+    }
+
+    public JjwtAccessTokenVerifier(String issuer,
+                                   String audience,
+                                   Duration leeway,
+                                   SigningKeyResolver signingKeyResolver,
+                                   Clock clock) {
+
+        super(issuer, leeway, signingKeyResolver, clock);
         this.audience = audience;
     }
 

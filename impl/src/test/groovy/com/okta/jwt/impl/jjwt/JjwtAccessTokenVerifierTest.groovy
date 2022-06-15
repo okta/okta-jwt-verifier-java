@@ -35,7 +35,7 @@ import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.hasItem
 import static org.hamcrest.Matchers.is
 
-class JjwtAccessTokenVerifierTest extends TokenVerifierTestSupport{
+class JjwtAccessTokenVerifierTest extends TokenVerifierTestSupport {
 
     final static String TEST_AUDIENCE_ID = "test-aud"
 

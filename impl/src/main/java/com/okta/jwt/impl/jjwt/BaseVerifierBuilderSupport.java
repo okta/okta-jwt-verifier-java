@@ -25,6 +25,7 @@ import io.jsonwebtoken.SigningKeyResolver;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Clock;
 import java.time.Duration;
 import java.util.Objects;
 
@@ -39,6 +40,7 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
     private String proxyPassword = null;
     private int retryMaxAttempts = 2; /* based on SDK spec */
     private Duration retryMaxElapsed = Duration.ofSeconds(10);
+    private Clock clock = Clock.systemDefaultZone();
 
     String getIssuer() {
         return issuer;
@@ -133,6 +135,15 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         return self();
     }
 
+    public Clock getClock() {
+        return clock;
+    }
+
+    public B setClock(Clock clock) {
+        this.clock = clock;
+        return self();
+    }
+
     @SuppressWarnings("unchecked")
     protected B self() {
         return (B) this;
@@ -184,11 +195,12 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
                 Objects.equals(proxyHost, that.proxyHost) &&
                 Objects.equals(proxyUsername, that.proxyUsername) &&
                 Objects.equals(proxyPassword, that.proxyPassword) &&
-                Objects.equals(retryMaxElapsed, that.retryMaxElapsed);
+                Objects.equals(retryMaxElapsed, that.retryMaxElapsed) &&
+                Objects.equals(clock, that.clock);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(issuer, leeway, connectionTimeout, proxyHost, proxyPort, proxyUsername, proxyPassword, retryMaxAttempts, retryMaxElapsed);
+        return Objects.hash(issuer, leeway, connectionTimeout, proxyHost, proxyPort, proxyUsername, proxyPassword, retryMaxAttempts, retryMaxElapsed, clock);
     }
 }
