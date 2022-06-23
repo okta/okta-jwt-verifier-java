@@ -21,7 +21,7 @@
     <parent>
         <groupId>com.okta.jwt</groupId>
         <artifactId>okta-jwt-verifier-parent</artifactId>
-        <version>0.5.2-SNAPSHOT</version>
+        <version>0.5.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>okta-jwt-verifier-impl</artifactId>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>com.okta.jwt</groupId>
             <artifactId>okta-jwt-verifier</artifactId>
-            <version>0.5.2-SNAPSHOT</version>
+            <version>0.5.3-SNAPSHOT</version>
         </dependency>
 
         <dependency>
