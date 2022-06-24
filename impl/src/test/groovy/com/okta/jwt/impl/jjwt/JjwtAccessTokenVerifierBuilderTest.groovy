@@ -19,14 +19,16 @@ import com.okta.jwt.impl.TestUtil
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
+import java.time.Clock
 import java.time.Duration
+import java.time.Instant
+import java.time.ZoneId
 
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.instanceOf
 import static org.hamcrest.Matchers.is
 
 class JjwtAccessTokenVerifierBuilderTest {
-
     @Test
     void orgIssuerTest() {
         def verifier = new JjwtAccessTokenVerifierBuilder()
@@ -40,6 +42,7 @@ class JjwtAccessTokenVerifierBuilderTest {
         assertThat verifier.keyResolver, instanceOf(IssuerMatchingSigningKeyResolver)
         assertThat verifier.keyResolver.delegate, instanceOf(RemoteJwkSigningKeyResolver)
         assertThat verifier.keyResolver.delegate.jwkUri, is(new URL("https://issuer.example.com/oauth2/v1/keys"))
+        assertThat verifier.clock, is(Clock.systemDefaultZone())
     }
 
     @Test
@@ -55,6 +58,7 @@ class JjwtAccessTokenVerifierBuilderTest {
         assertThat verifier.keyResolver, instanceOf(IssuerMatchingSigningKeyResolver)
         assertThat verifier.keyResolver.delegate, instanceOf(RemoteJwkSigningKeyResolver)
         assertThat verifier.keyResolver.delegate.jwkUri, is(new URL("https://issuer.example.com/oauth2/anAsId/v1/keys"))
+        assertThat verifier.clock, is(Clock.systemDefaultZone())
     }
 
     @Test(dataProvider = "validIssuers")
@@ -65,6 +69,20 @@ class JjwtAccessTokenVerifierBuilderTest {
             .build()
 
         assertThat verifier.issuer, is("https://valid.example.com/oauth2/default")
+    }
+
+    @Test
+    void fixedClockTest() {
+        Clock fixedClock =
+                Clock.fixed(Instant.ofEpochSecond(361385454L), ZoneId.systemDefault())
+
+        def verifier = new JjwtAccessTokenVerifierBuilder()
+                .setIssuer("https://issuer.example.com")
+                .setAudience("foo-aud")
+                .setClock(fixedClock)
+                .build()
+
+        assertThat verifier.clock, is(fixedClock)
     }
 
     @Test
