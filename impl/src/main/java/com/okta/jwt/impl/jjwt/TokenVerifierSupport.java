@@ -104,6 +104,10 @@ abstract class TokenVerifierSupport {
         return jwtParser;
     }
 
+    Clock getClock() {
+        return clock;
+    }
+
     static class OktaJwtHandler extends JwtHandlerAdapter<Jws<Claims>> {
 
         private final ClaimsValidator claimsValidator;

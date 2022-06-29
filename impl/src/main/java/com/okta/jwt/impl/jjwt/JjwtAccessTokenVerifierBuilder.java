@@ -55,6 +55,6 @@ public final class JjwtAccessTokenVerifierBuilder extends BaseVerifierBuilderSup
     @Override
     public AccessTokenVerifier build() {
         validate();
-        return new JjwtAccessTokenVerifier(getIssuer(), audience, getLeeway(), signingKeyResolver());
+        return new JjwtAccessTokenVerifier(getIssuer(), audience, getLeeway(), signingKeyResolver(), getClock());
     }
 }
