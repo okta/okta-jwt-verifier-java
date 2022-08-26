@@ -17,7 +17,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
 
     <suppress>
        <notes><![CDATA[ false positive, this is a PHP library issue ]]></notes>
@@ -40,10 +40,4 @@
         <cve>CVE-2018-8088</cve>
     </suppress>
 
-    <!-- likely false positive - https://github.com/OSSIndex/vulns/issues/296 -->
-    <suppress>
-        <notes><![CDATA[ file name: okhttp-4.10.0.jar]]></notes>
-        <cve>CVE-2021-0341</cve>
-    </suppress>
-    
 </suppressions>
