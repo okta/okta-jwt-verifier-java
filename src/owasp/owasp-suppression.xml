@@ -40,10 +40,4 @@
         <cve>CVE-2018-8088</cve>
     </suppress>
 
-    <!-- likely false positive - https://github.com/OSSIndex/vulns/issues/296 -->
-    <suppress>
-        <notes><![CDATA[ file name: okhttp-4.10.0.jar]]></notes>
-        <cve>CVE-2021-0341</cve>
-    </suppress>
-    
 </suppressions>
