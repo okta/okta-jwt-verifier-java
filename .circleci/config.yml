@@ -25,7 +25,7 @@ jobs:
 
   jdk17:
     docker:
-      - image: cimg/openjdk:17.0.3
+      - image: cimg/openjdk:17.0.4
     environment:
         JVM_OPTS: -Xmx3200m
     steps: *build_steps
