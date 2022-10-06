@@ -21,7 +21,7 @@
     <parent>
         <groupId>com.okta.jwt</groupId>
         <artifactId>okta-jwt-verifier-parent</artifactId>
-        <version>0.5.7</version>
+        <version>0.5.8-SNAPSHOT</version>
     </parent>
 
     <groupId>com.okta.jwt.examples</groupId>
