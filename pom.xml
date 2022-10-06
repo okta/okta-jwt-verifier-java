@@ -25,7 +25,7 @@
 
     <groupId>com.okta.jwt</groupId>
     <artifactId>okta-jwt-verifier-parent</artifactId>
-    <version>0.5.7-SNAPSHOT</version>
+    <version>0.5.8-SNAPSHOT</version>
     <name>Okta JWT Verifier :: Parent</name>
     <packaging>pom</packaging>
 
@@ -58,17 +58,17 @@
             <dependency>
                 <groupId>com.okta.jwt</groupId>
                 <artifactId>okta-jwt-verifier</artifactId>
-                <version>0.5.7-SNAPSHOT</version>
+                <version>0.5.8-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.okta.jwt</groupId>
                 <artifactId>okta-jwt-verifier-impl</artifactId>
-                <version>0.5.7-SNAPSHOT</version>
+                <version>0.5.8-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.okta.jwt</groupId>
                 <artifactId>okta-jwt-verifier-integration-tests</artifactId>
-                <version>0.5.7-SNAPSHOT</version>
+                <version>0.5.8-SNAPSHOT</version>
             </dependency>
 
             <dependency>
