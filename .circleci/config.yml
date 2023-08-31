@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  general-platform-helpers: okta/general-platform-helpers@1.8
+
 aliases:
 
   - &build_steps
@@ -36,3 +39,12 @@ workflows:
       - jdk8
       - jdk11
       - jdk17
+  # See OKTA-634407
+  semgrep:
+    jobs:
+      - general-platform-helpers/job-semgrep-prepare:
+          name: semgrep-prepare
+      - general-platform-helpers/job-semgrep-scan:
+          name: "Scan with Semgrep"
+          requires:
+            - semgrep-prepare
