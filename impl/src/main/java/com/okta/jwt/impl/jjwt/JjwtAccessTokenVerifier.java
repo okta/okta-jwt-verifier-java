@@ -55,4 +55,10 @@ public class JjwtAccessTokenVerifier extends TokenVerifierSupport
     public Jwt decode(String accessToken) throws JwtVerificationException {
         return decode(accessToken, parser(), new ClaimsValidator.ContainsAudienceClaimsValidator(audience));
     }
+
+    @Override
+    public void loadJwks() throws Exception {
+       RemoteJwkSigningKeyResolver remoteJwkSigningKeyResolver=  (RemoteJwkSigningKeyResolver) this.getKeyResolver();
+       remoteJwkSigningKeyResolver.updateKeys();
+    }
 }

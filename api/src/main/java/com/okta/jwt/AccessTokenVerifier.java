@@ -35,6 +35,13 @@ public interface AccessTokenVerifier {
     Jwt decode(String accessToken) throws JwtVerificationException;
 
     /**
+     * Validates the given {@code accessToken}.  Validates this token is valid Okta access token that has not expired.
+     *
+     * @return a decoded JWT
+     * @throws JwtVerificationException when parsing or validation errors occur
+     */
+    void loadJwks() throws Exception;
+    /**
      * Builder interface used to simplify construction of a AccessTokenVerifier.
      */
     interface Builder extends VerifierBuilderSupport<Builder, AccessTokenVerifier> {
