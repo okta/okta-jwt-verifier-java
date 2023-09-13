@@ -83,7 +83,7 @@ final class RemoteJwkSigningKeyResolver implements SigningKeyResolver {
         }
     }
 
-    public void updateKeys() {
+    void updateKeys() {
         try {
             Map<String, Key> newKeys =
             objectMapper.readValue(httpClient.get(jwkUri), JwkKeys.class).getKeys().stream()

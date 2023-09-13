@@ -18,6 +18,8 @@ package com.okta.jwt.impl.jjwt;
 import com.okta.jwt.AccessTokenVerifier;
 import com.okta.jwt.Jwt;
 import com.okta.jwt.JwtVerificationException;
+
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.SigningKeyResolver;
 
 import java.time.Clock;
@@ -56,8 +58,9 @@ public class JjwtAccessTokenVerifier extends TokenVerifierSupport
         return decode(accessToken, parser(), new ClaimsValidator.ContainsAudienceClaimsValidator(audience));
     }
 
+    //To allow explicitly push changes
     @Override
-    public void loadJwks() throws Exception {
+    public void loadJwks() throws JwtException {
        RemoteJwkSigningKeyResolver remoteJwkSigningKeyResolver=  (RemoteJwkSigningKeyResolver) this.getKeyResolver();
        remoteJwkSigningKeyResolver.updateKeys();
     }
