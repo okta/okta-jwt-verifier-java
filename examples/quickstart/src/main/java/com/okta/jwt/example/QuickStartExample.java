@@ -41,6 +41,8 @@ public class QuickStartExample {
                                     .setAudience(audience)
                                     .setConnectionTimeout(Duration.ofSeconds(1)) // defaults to 1000ms
                                     .build();
+        //1.1 Preload cache (optional)
+        jwtVerifier.loadJwks();
 
         // 2. Process the token (includes validation)
         Jwt jwt = jwtVerifier.decode(jwtString);
