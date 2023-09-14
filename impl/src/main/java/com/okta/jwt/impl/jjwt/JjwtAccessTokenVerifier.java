@@ -18,7 +18,6 @@ package com.okta.jwt.impl.jjwt;
 import com.okta.jwt.AccessTokenVerifier;
 import com.okta.jwt.Jwt;
 import com.okta.jwt.JwtVerificationException;
-
 import io.jsonwebtoken.SigningKeyResolver;
 
 import java.time.Clock;

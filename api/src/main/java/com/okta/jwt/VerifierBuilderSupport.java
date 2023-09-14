@@ -108,6 +108,14 @@ public interface VerifierBuilderSupport<B extends VerifierBuilderSupport, R> {
     B setClock(Clock clock);
 
     /**
+     * Sets the {@code preloadSigningKeys} the verifier will use to determine if it needs to prefetch Signing keys into cache at boot time.
+     *
+     * @param preloadSigningKeys specify if we want to prefetch the signing keys from issuer's url at boot time
+     * @return a reference to the current builder for use in method chaining
+     */
+    B setPreloadSigningKeys(boolean preloadSigningKeys);
+
+    /**
      * Constructs a JWT Verifier.
      * @return A JWT Verifier
      */

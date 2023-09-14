@@ -41,18 +41,7 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
     private int retryMaxAttempts = 2; /* based on SDK spec */
     private Duration retryMaxElapsed = Duration.ofSeconds(10);
     private Clock clock = Clock.systemDefaultZone();
-    private Boolean preloadSigningKeys = false;
-
-    public B getPreloadSigningKeys() {
-        return self();
-    }
-
-    public B setPreloadSigningKeys(Boolean preloadSigningKeys) {
-        this.preloadSigningKeys = preloadSigningKeys;
-        return self();
-    }
-
-
+    private boolean preloadSigningKeys = false;
 
     String getIssuer() {
         return issuer;
@@ -156,6 +145,17 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         return self();
     }
 
+   public boolean getPreloadSigningKeys() {
+        return preloadSigningKeys;
+    }
+
+    @Override
+    public B setPreloadSigningKeys(boolean preloadSigningKeys) {
+        this.preloadSigningKeys = preloadSigningKeys;
+        return self();
+    }
+
+
     @SuppressWarnings("unchecked")
     protected B self() {
         return (B) this;
@@ -177,7 +177,7 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
                             new URL(resolveKeysEndpoint(getIssuer())),
                             httpClient());
            //preload keys during start up. so that if the call the issuer keys fails, its not a runtime exception.
-            if (preloadSigningKeys) {
+            if (getPreloadSigningKeys()) {
                 remoteJwkSigningKeyResolver.updateKeys();
             }
             return remoteJwkSigningKeyResolver;
