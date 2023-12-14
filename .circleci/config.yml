@@ -38,7 +38,7 @@ jobs:
       - image: cimg/openjdk:17.0.4
     steps:
       - checkout
-      - run: ./mvnw -ntp clean install -Pci -Dmaven.test.skip.exec=true
+      - run: ./mvnw clean install -Pci -Dmaven.test.skip.exec=true
       - general-platform-helpers/step-load-dependencies
       - general-platform-helpers/step-run-snyk-monitor:
           scan-all-projects: false
