@@ -23,6 +23,7 @@ import io.jsonwebtoken.JwtBuilder
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.SigningKeyResolver
 import io.jsonwebtoken.impl.DefaultClaims
+import io.jsonwebtoken.impl.ParameterMap
 import io.jsonwebtoken.io.Serializer
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -42,7 +43,7 @@ class JjwtAccessTokenVerifierTest extends TokenVerifierTestSupport {
     @Test(dataProvider = "validAudienceIds")
     void validAudienceIds(Object aud) {
         assertValidJwt(baseJwtBuilder()
-                .claim("aud", aud))
+                    .claim("aud", aud))
     }
 
     @Test(dataProvider = "invalidAudienceIds")
@@ -90,12 +91,12 @@ class JjwtAccessTokenVerifierTest extends TokenVerifierTestSupport {
     byte[] defaultFudgedBody() {
         Serializer serializer = Classes.loadFromService(Serializer)
         Instant now = Instant.now()
-        def bodyMap = new DefaultClaims()
-            .setIssuer(TEST_ISSUER)
-            .setAudience(TEST_AUDIENCE_ID)
-            .setIssuedAt(Date.from(now))
-            .setNotBefore(Date.from(now))
-            .setExpiration(Date.from(now.plus(1L, ChronoUnit.HOURS)))
+        def bodyMap = new HashMap()
+        bodyMap.put(DefaultClaims.ISSUER, TEST_ISSUER)
+        bodyMap.put(DefaultClaims.AUDIENCE, TEST_AUDIENCE_ID)
+        bodyMap.put(DefaultClaims.ISSUED_AT, Date.from(now))
+        bodyMap.put(DefaultClaims.NOT_BEFORE, Date.from(now))
+        bodyMap.put(DefaultClaims.EXPIRATION, Date.from(now.plus(1L, ChronoUnit.HOURS)))
 
         return serializer.serialize(bodyMap)
     }

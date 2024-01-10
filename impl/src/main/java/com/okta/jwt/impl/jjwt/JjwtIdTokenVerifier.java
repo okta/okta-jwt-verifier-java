@@ -49,7 +49,7 @@ public class JjwtIdTokenVerifier extends TokenVerifierSupport
                jws -> {
                    String actualNonce = jws.getBody().get("nonce", String.class);
                    if (!Objects.nullSafeEquals(actualNonce, nonce)) {
-                       throw new IncorrectClaimException(jws.getHeader(), jws.getBody(), "Claim `nonce` does not match expected value. Note: a `null` nonce is only valid when both the expected and actual values are `null`.");
+                       throw new IncorrectClaimException(jws.getHeader(), jws.getBody(), "nonce", actualNonce, "Claim `nonce` does not match expected value. Note: a `null` nonce is only valid when both the expected and actual values are `null`.");
                    }
                }));
     }

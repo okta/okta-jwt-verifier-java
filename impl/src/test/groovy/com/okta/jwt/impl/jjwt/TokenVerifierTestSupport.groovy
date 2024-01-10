@@ -25,8 +25,7 @@ import io.jsonwebtoken.JwtBuilder
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.SigningKeyResolver
-import io.jsonwebtoken.impl.crypto.DefaultJwtSigner
-import io.jsonwebtoken.impl.crypto.JwtSigner
+import io.jsonwebtoken.impl.DefaultJwtBuilder
 import io.jsonwebtoken.io.Encoders
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -65,7 +64,7 @@ abstract class TokenVerifierTestSupport {
             }
 
             @Override
-            Key resolveSigningKey(JwsHeader header, String plaintext) {
+            Key resolveSigningKey(JwsHeader header, byte[] bytes) {
                 return TEST_KEY_PAIR.getPublic()
             }
         }
@@ -87,13 +86,12 @@ abstract class TokenVerifierTestSupport {
     JwtBuilder baseJwtBuilder() {
         Instant now = Instant.now()
         return Jwts.builder()
-                .setSubject("joe.coder@example.com")
-                .setIssuer(TEST_ISSUER)
-                .setIssuedAt(Date.from(now))
-                .setNotBefore(Date.from(now))
-                .setExpiration(Date.from(now.plus(1L, ChronoUnit.HOURS)))
-                .setHeader(Jwts.jwsHeader()
-                    .setKeyId(TEST_PUB_KEY_ID))
+                .subject("joe.coder@example.com")
+                .issuer(TEST_ISSUER)
+                .issuedAt(Date.from(now))
+                .notBefore(Date.from(now))
+                .expiration(Date.from(now.plus(1L, ChronoUnit.HOURS)))
+                .setHeaderParam("kid", TEST_PUB_KEY_ID)
     }
 
     @Test
@@ -242,8 +240,7 @@ abstract class TokenVerifierTestSupport {
         def orgIssuer = "https://test.example.com"
         String token = baseJwtBuilder()
             .setIssuer(orgIssuer)
-            .setHeader(Jwts.jwsHeader()
-                .setKeyId("OKTA_ORG_KEY"))
+            .setHeaderParam("kid", "OKTA_ORG_KEY")
             .signWith(ORG_KEY_PAIR.getPrivate(), SignatureAlgorithm.RS256)
             .compact()
 
@@ -258,14 +255,14 @@ abstract class TokenVerifierTestSupport {
 
     String buildJwtWithFudgedHeader(String headerJson, byte[] bodyBytes = defaultFudgedBody()) {
 
-        JwtSigner signer = new DefaultJwtSigner(SignatureAlgorithm.RS256, TEST_KEY_PAIR.getPrivate(), Encoders.BASE64URL)
+        JwtBuilder builder = new DefaultJwtBuilder()
 
         def headerBytes = headerJson.getBytes(StandardCharsets.UTF_8)
         def header = Encoders.BASE64URL.encode(headerBytes)
         def body = Encoders.BASE64URL.encode(bodyBytes)
 
         def jwt = header + "." + body
-        jwt += "." + signer.sign(jwt)
+        jwt += "." + builder.signWith(TEST_KEY_PAIR.getPrivate(), SignatureAlgorithm.RS256)
 
         return jwt
     }
