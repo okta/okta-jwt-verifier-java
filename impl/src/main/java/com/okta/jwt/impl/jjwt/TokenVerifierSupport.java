@@ -63,7 +63,7 @@ abstract class TokenVerifierSupport {
 
     protected JwtParser buildJwtParser() {
         io.jsonwebtoken.Clock jwtClock = () -> Date.from(clock.instant());
-        return Jwts.parserBuilder()
+        return Jwts.parser()
                 .setSigningKeyResolver(keyResolver)
                 .requireIssuer(issuer)
                 .setAllowedClockSkewSeconds(leeway.getSeconds())

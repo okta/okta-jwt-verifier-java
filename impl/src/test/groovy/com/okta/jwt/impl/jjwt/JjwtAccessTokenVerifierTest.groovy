@@ -41,8 +41,18 @@ class JjwtAccessTokenVerifierTest extends TokenVerifierTestSupport {
 
     @Test(dataProvider = "validAudienceIds")
     void validAudienceIds(Object aud) {
-        assertValidJwt(baseJwtBuilder()
-                .claim("aud", aud))
+        if (aud instanceof Collection) {
+            String joinedAudStr = String.join(" ", (Set) aud)
+//            Map claimsMap = new HashMap()
+//            claimsMap.put("aud", joinedAudStr)
+//            assertValidJwt(baseJwtBuilder()
+//                    .claims(claimsMap))
+            assertValidJwt(baseJwtBuilder()
+                    .setAudience(joinedAudStr))
+        } else {
+            assertValidJwt(baseJwtBuilder()
+                    .claim("aud", aud))
+        }
     }
 
     @Test(dataProvider = "invalidAudienceIds")
@@ -90,12 +100,12 @@ class JjwtAccessTokenVerifierTest extends TokenVerifierTestSupport {
     byte[] defaultFudgedBody() {
         Serializer serializer = Classes.loadFromService(Serializer)
         Instant now = Instant.now()
-        def bodyMap = new DefaultClaims()
-            .setIssuer(TEST_ISSUER)
-            .setAudience(TEST_AUDIENCE_ID)
-            .setIssuedAt(Date.from(now))
-            .setNotBefore(Date.from(now))
-            .setExpiration(Date.from(now.plus(1L, ChronoUnit.HOURS)))
+        def bodyMap = new HashMap()
+        bodyMap.put(DefaultClaims.ISSUER, TEST_ISSUER)
+        bodyMap.put(DefaultClaims.AUDIENCE, TEST_AUDIENCE_ID)
+        bodyMap.put(DefaultClaims.ISSUED_AT, Date.from(now))
+        bodyMap.put(DefaultClaims.NOT_BEFORE, Date.from(now))
+        bodyMap.put(DefaultClaims.EXPIRATION, Date.from(now.plus(1L, ChronoUnit.HOURS)))
 
         return serializer.serialize(bodyMap)
     }

@@ -21,6 +21,8 @@ import io.jsonwebtoken.JwsHeader
 import io.jsonwebtoken.JwtException
 import org.testng.annotations.Test
 
+import java.nio.charset.Charset
+
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.is
 import static org.mockito.ArgumentMatchers.any
@@ -42,7 +44,7 @@ class RemoteJwkSigningKeyResolverTest {
         when(httpClient.get(url)).thenThrow(new IOException("expected in test"))
 
         def underTest = new RemoteJwkSigningKeyResolver(url, httpClient)
-        TestUtil.expect JwtException, { underTest.resolveSigningKey(jwsHeader, "not.used")}
+        TestUtil.expect JwtException, { underTest.resolveSigningKey(jwsHeader, "not.used".getBytes("UTF-8"))}
     }
 
     @Test
@@ -58,10 +60,10 @@ class RemoteJwkSigningKeyResolverTest {
         when(jwsHeader2.getKeyId()).thenReturn("key-two")
 
         def underTest = new RemoteJwkSigningKeyResolver(url, httpClient)
-        def result = underTest.resolveSigningKey(jwsHeader1, "not.used")
+        def result = underTest.resolveSigningKey(jwsHeader1, "not.used".getBytes("UTF-8"))
         assertThat result.getAlgorithm(), is("RSA")
 
-        result = underTest.resolveSigningKey(jwsHeader2, "not.used")
+        result = underTest.resolveSigningKey(jwsHeader2, "not.used".getBytes("UTF-8"))
         assertThat result.getAlgorithm(), is("RSA")
 
         verify(httpClient, times(1)).get(any(URL))
@@ -83,10 +85,10 @@ class RemoteJwkSigningKeyResolverTest {
         when(jwsHeader2.getKeyId()).thenReturn("key-two")
 
         def underTest = new RemoteJwkSigningKeyResolver(url, httpClient)
-        def result = underTest.resolveSigningKey(jwsHeader1, "not.used")
+        def result = underTest.resolveSigningKey(jwsHeader1, "not.used".getBytes("UTF-8"))
         assertThat result.getAlgorithm(), is("RSA")
 
-        result = underTest.resolveSigningKey(jwsHeader2, "not.used")
+        result = underTest.resolveSigningKey(jwsHeader2, "not.used".getBytes("UTF-8"))
         assertThat result.getAlgorithm(), is("RSA")
 
         verify(httpClient, times(2)).get(any(URL))
