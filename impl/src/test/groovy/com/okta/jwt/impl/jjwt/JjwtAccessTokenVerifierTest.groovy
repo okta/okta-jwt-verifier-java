@@ -23,7 +23,6 @@ import io.jsonwebtoken.JwtBuilder
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.SigningKeyResolver
 import io.jsonwebtoken.impl.DefaultClaims
-import io.jsonwebtoken.impl.ParameterMap
 import io.jsonwebtoken.io.Serializer
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -42,8 +41,13 @@ class JjwtAccessTokenVerifierTest extends TokenVerifierTestSupport {
 
     @Test(dataProvider = "validAudienceIds")
     void validAudienceIds(Object aud) {
-        assertValidJwt(baseJwtBuilder()
+        if (aud instanceof Collection) {
+            assertValidJwt(baseJwtBuilder()
+                    .audience().add(aud).and())
+        } else {
+            assertValidJwt(baseJwtBuilder()
                     .claim("aud", aud))
+        }
     }
 
     @Test(dataProvider = "invalidAudienceIds")
@@ -109,7 +113,6 @@ class JjwtAccessTokenVerifierTest extends TokenVerifierTestSupport {
                 ["invalid-aud"],
                 [Collections.emptySet()],
                 ["Test-Aud"],
-                [true],
         ]
     }
 

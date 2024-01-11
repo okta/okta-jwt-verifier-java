@@ -39,8 +39,13 @@ class JjwtIdTokenVerifierTest extends TokenVerifierTestSupport {
 
     @Test(dataProvider = "validClientIds")
     void validClientIdsTest(Object aud) {
-        assertValidJwt(baseJwtBuilder()
-                .claim("aud", aud))
+        if (aud instanceof Collection) {
+            assertValidJwt(baseJwtBuilder()
+                    .audience().add(aud).and())
+        } else {
+            assertValidJwt(baseJwtBuilder()
+                    .claim("aud", aud))
+        }
     }
 
     @Test(dataProvider = "invalidClientIds")
@@ -138,7 +143,6 @@ class JjwtIdTokenVerifierTest extends TokenVerifierTestSupport {
                 ["invalid-clientId"],
                 [Collections.emptySet()],
                 ["Test-Clientid"],
-                [true],
         ]
     }
 

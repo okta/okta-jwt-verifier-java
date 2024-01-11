@@ -273,7 +273,6 @@ abstract class TokenVerifierTestSupport {
                 [TEST_ISSUER + "/"],
                 [TEST_ISSUER + "/other-path"],
                 ["https://Test.Example.com/Issuer"],
-                [true]
         ]
     }
 
