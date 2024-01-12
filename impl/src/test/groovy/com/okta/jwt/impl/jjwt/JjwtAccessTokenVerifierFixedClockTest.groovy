@@ -41,12 +41,12 @@ class JjwtAccessTokenVerifierFixedClockTest extends JjwtAccessTokenVerifierTest 
     byte[] defaultFudgedBody() {
         Serializer serializer = Classes.loadFromService(Serializer)
         Instant now = clock.instant()
-        def bodyMap = new DefaultClaims()
-            .setIssuer(TEST_ISSUER)
-            .setAudience(TEST_AUDIENCE_ID)
-            .setIssuedAt(Date.from(now))
-            .setNotBefore(Date.from(now))
-            .setExpiration(Date.from(now.plus(1L, ChronoUnit.HOURS)))
+        def bodyMap = new HashMap()
+        bodyMap.put(DefaultClaims.ISSUER, TEST_ISSUER)
+        bodyMap.put(DefaultClaims.AUDIENCE, TEST_AUDIENCE_ID)
+        bodyMap.put(DefaultClaims.ISSUED_AT, Date.from(now))
+        bodyMap.put(DefaultClaims.NOT_BEFORE, Date.from(now))
+        bodyMap.put(DefaultClaims.EXPIRATION, Date.from(now.plus(1L, ChronoUnit.HOURS)))
 
         return serializer.serialize(bodyMap)
     }
@@ -61,13 +61,13 @@ class JjwtAccessTokenVerifierFixedClockTest extends JjwtAccessTokenVerifierTest 
     JwtBuilder baseJwtBuilder() {
         Instant now = clock.instant()
         return Jwts.builder()
-                .setSubject("joe.coder@example.com")
-                .setIssuer(TEST_ISSUER)
+                .subject("joe.coder@example.com")
+                .issuer(TEST_ISSUER)
                 .setAudience(TEST_AUDIENCE_ID)
-                .setIssuedAt(Date.from(now))
-                .setNotBefore(Date.from(now))
-                .setExpiration(Date.from(now.plus(1L, ChronoUnit.HOURS)))
-                .setHeader(Jwts.jwsHeader().setKeyId(TEST_PUB_KEY_ID))
+                .issuedAt(Date.from(now))
+                .notBefore(Date.from(now))
+                .expiration(Date.from(now.plus(1L, ChronoUnit.HOURS)))
+                .setHeaderParam("kid", TEST_PUB_KEY_ID)
     }
 
     @Test

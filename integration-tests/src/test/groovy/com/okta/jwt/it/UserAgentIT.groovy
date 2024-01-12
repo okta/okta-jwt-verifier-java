@@ -47,8 +47,7 @@ class UserAgentIT extends KeyServerITSupport {
                 .setIssuedAt(Date.from(now))
                 .setNotBefore(Date.from(now))
                 .setExpiration(Date.from(now.plus(1L, ChronoUnit.HOURS)))
-                .setHeader(Jwts.jwsHeader()
-                        .setKeyId(TEST_PUB_KEY_ID_1))
+                .setHeaderParam("kid", TEST_PUB_KEY_ID_1)
                 .signWith(TEST_KEY_PAIR_1.getPrivate(), SignatureAlgorithm.RS256)
                 .compact()
 

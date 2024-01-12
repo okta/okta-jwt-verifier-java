@@ -64,7 +64,7 @@ interface ClaimsValidator {
             Object actual = jws.getBody().get("aud");
             if (!(actual instanceof Collection && ((Collection<?>) actual).contains(expectedAudience)
                 || actual instanceof String && actual.equals(expectedAudience))) {
-                throw new IncorrectClaimException(jws.getHeader(), jws.getBody(), "Claim `aud` was invalid, it did not contain the expected value of: "+ expectedAudience);
+                throw new IncorrectClaimException(jws.getHeader(), jws.getBody(), "aud", actual, "Claim `aud` was invalid, it did not contain the expected value of: "+ expectedAudience);
             }
         }
     }

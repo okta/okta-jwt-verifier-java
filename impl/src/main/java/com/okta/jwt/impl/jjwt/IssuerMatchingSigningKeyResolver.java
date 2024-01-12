@@ -21,6 +21,7 @@ import io.jsonwebtoken.IncorrectClaimException;
 import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.SigningKeyResolver;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 /**
@@ -44,8 +45,7 @@ final class IssuerMatchingSigningKeyResolver implements SigningKeyResolver {
         // avoid fetching keys if the issuer is not correct
         if (!issuer.equals(claims.getIssuer())) {
             String msg = String.format(ClaimJwtException.INCORRECT_EXPECTED_CLAIM_MESSAGE_TEMPLATE, Claims.ISSUER, issuer, claims.getIssuer());
-            IncorrectClaimException incorrectClaimException = new IncorrectClaimException(header, claims, msg);
-            incorrectClaimException.setClaimName(Claims.ISSUER);
+            IncorrectClaimException incorrectClaimException = new IncorrectClaimException(header, claims, Claims.ISSUER, null, msg);
             throw incorrectClaimException;
         }
 
@@ -53,7 +53,8 @@ final class IssuerMatchingSigningKeyResolver implements SigningKeyResolver {
     }
 
     @Override
-    public Key resolveSigningKey(JwsHeader header, String plaintext) {
-        return delegate.resolveSigningKey(header, plaintext);
+    public Key resolveSigningKey(JwsHeader jwsHeader, byte[] bytes) {
+        return delegate.resolveSigningKey(jwsHeader, new String(bytes, StandardCharsets.UTF_8).getBytes());
     }
+
 }
