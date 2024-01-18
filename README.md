@@ -50,6 +50,7 @@ AccessTokenVerifier jwtVerifier = JwtVerifiers.accessTokenVerifierBuilder()
     .setConnectionTimeout(Duration.ofSeconds(1))    // defaults to 1s
     .setRetryMaxAttempts(2)                     // defaults to 2
     .setRetryMaxElapsed(Duration.ofSeconds(10)) // defaults to 10s
+    .setPreloadSigningKeys(true)                // defaults to false
     .build();
 ```
 [//]: # (end: basicUsage)

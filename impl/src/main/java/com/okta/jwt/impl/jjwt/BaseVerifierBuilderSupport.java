@@ -41,6 +41,7 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
     private int retryMaxAttempts = 2; /* based on SDK spec */
     private Duration retryMaxElapsed = Duration.ofSeconds(10);
     private Clock clock = Clock.systemDefaultZone();
+    private boolean preloadSigningKeys = false;
 
     String getIssuer() {
         return issuer;
@@ -144,6 +145,17 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         return self();
     }
 
+   public boolean getPreloadSigningKeys() {
+        return preloadSigningKeys;
+    }
+
+    @Override
+    public B setPreloadSigningKeys(boolean preloadSigningKeys) {
+        this.preloadSigningKeys = preloadSigningKeys;
+        return self();
+    }
+
+
     @SuppressWarnings("unchecked")
     protected B self() {
         return (B) this;
@@ -161,9 +173,14 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
 
     protected SigningKeyResolver signingKeyResolver() {
         try {
-            return new RemoteJwkSigningKeyResolver(
+           RemoteJwkSigningKeyResolver remoteJwkSigningKeyResolver =  new RemoteJwkSigningKeyResolver(
                             new URL(resolveKeysEndpoint(getIssuer())),
                             httpClient());
+           //preload keys during start up. so that if the call the issuer keys fails, its not a runtime exception.
+            if (getPreloadSigningKeys()) {
+                remoteJwkSigningKeyResolver.updateKeys();
+            }
+            return remoteJwkSigningKeyResolver;
         } catch (MalformedURLException e) {
             throw new IllegalStateException("Invalid issuer URL in configuration");
         }
