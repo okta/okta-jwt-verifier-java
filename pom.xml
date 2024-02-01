@@ -33,7 +33,7 @@
         <github.slug>okta/okta-jwt-verifier-java</github.slug>
         <okhttp.version>4.12.0</okhttp.version>
         <okta.commons.version>1.3.5</okta.commons.version>
-        <jjwt.version>0.12.3</jjwt.version>
+        <jjwt.version>0.12.5</jjwt.version>
     </properties>
 
     <modules>
