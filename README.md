@@ -14,6 +14,10 @@ you an example of how to do this using Okta's JWT Validation library for Java.
 
 > If you are validating access tokens from a Spring application take a look at the [Okta Spring Boot Starter](https://github.com/okta/okta-spring-boot).
 
+### Prerequisites
+
+* Java 11 or later
+
 ## Things you will need
 To validate a JWT, you will need a few different items:
 
