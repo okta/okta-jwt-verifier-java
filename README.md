@@ -2,7 +2,6 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.okta.jwt/okta-jwt-verifier.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.okta.jwt%22%20a%3A%22okta-jwt-verifier%22)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Support](https://img.shields.io/badge/support-Developer%20Forum-blue.svg)](https://devforum.okta.com/)
-[![Build Status](https://travis-ci.com/okta/okta-jwt-verifier-java.svg?branch=master)](https://app.travis-ci.com/github/okta/okta-jwt-verifier-java)
 
 # Okta JWT Verifier for Java
 
