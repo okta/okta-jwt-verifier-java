@@ -20,11 +20,7 @@ import com.okta.jwt.JwtVerificationException;
 import com.okta.jwt.impl.DefaultJwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClaimsBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.*;
