@@ -57,7 +57,6 @@ abstract class TokenVerifierSupport {
     protected JwtParser buildJwtParser() {
         io.jsonwebtoken.Clock jwtClock = () -> Date.from(clock.instant());
         return Jwts.parser()
-                //.setSigningKeyResolver(keyResolver)
                 .keyLocator(header -> {
                     Claims claims = new DefaultClaimsBuilder()
                             .issuer(issuer)
