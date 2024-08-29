@@ -25,7 +25,7 @@ import io.jsonwebtoken.lang.Objects;
 import java.time.Duration;
 
 /**
- * Classes in this `impl` implementation package may change in NON backward compatible way, and should ONLY be used as
+ * Classes in this `impl` implementation package may change in NON-backward compatible way, and should ONLY be used as
  * a "runtime" dependency.
  */
 public class JjwtIdTokenVerifier extends TokenVerifierSupport
@@ -47,9 +47,9 @@ public class JjwtIdTokenVerifier extends TokenVerifierSupport
        return decode(idToken, parser(), ClaimsValidator.compositeClaimsValidator(
                new ClaimsValidator.ContainsAudienceClaimsValidator(clientId),
                jws -> {
-                   String actualNonce = jws.getBody().get("nonce", String.class);
+                   String actualNonce = jws.getPayload().get("nonce", String.class);
                    if (!Objects.nullSafeEquals(actualNonce, nonce)) {
-                       throw new IncorrectClaimException(jws.getHeader(), jws.getBody(), "nonce", actualNonce, "Claim `nonce` does not match expected value. Note: a `null` nonce is only valid when both the expected and actual values are `null`.");
+                       throw new IncorrectClaimException(jws.getHeader(), jws.getPayload(), "nonce", actualNonce, "Claim `nonce` does not match expected value. Note: a `null` nonce is only valid when both the expected and actual values are `null`.");
                    }
                }));
     }

@@ -18,19 +18,12 @@ package com.okta.jwt.impl.jjwt;
 import com.okta.jwt.Jwt;
 import com.okta.jwt.JwtVerificationException;
 import com.okta.jwt.impl.DefaultJwt;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.JwtHandlerAdapter;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SigningKeyResolver;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.impl.DefaultClaimsBuilder;
 
 import java.time.Clock;
 import java.time.Duration;
-import java.util.Date;
+import java.util.*;
 
 abstract class TokenVerifierSupport {
 
@@ -64,10 +57,15 @@ abstract class TokenVerifierSupport {
     protected JwtParser buildJwtParser() {
         io.jsonwebtoken.Clock jwtClock = () -> Date.from(clock.instant());
         return Jwts.parser()
-                .setSigningKeyResolver(keyResolver)
+                .keyLocator(header -> {
+                    Claims claims = new DefaultClaimsBuilder()
+                            .issuer(issuer)
+                            .build();
+                    return keyResolver.resolveSigningKey((JwsHeader) header, claims);
+                })
                 .requireIssuer(issuer)
-                .setAllowedClockSkewSeconds(leeway.getSeconds())
-                .setClock(jwtClock)
+                .clockSkewSeconds(leeway.getSeconds())
+                .clock(jwtClock)
                 .build();
     }
 
@@ -80,9 +78,9 @@ abstract class TokenVerifierSupport {
         try {
             Jws<Claims> jwt = parser.parse(token, new OktaJwtHandler(claimsValidator));
             return new DefaultJwt(token,
-                    jwt.getBody().getIssuedAt().toInstant(),
-                    jwt.getBody().getExpiration().toInstant(),
-                    jwt.getBody());
+                    jwt.getPayload().getIssuedAt().toInstant(),
+                    jwt.getPayload().getExpiration().toInstant(),
+                    jwt.getPayload());
         } catch (JwtException e) {
             throw new JwtVerificationException("Failed to parse token", e);
         }
@@ -121,8 +119,8 @@ abstract class TokenVerifierSupport {
 
            // validate alg
            String alg = jws.getHeader().getAlgorithm();
-           if(!SignatureAlgorithm.RS256.getValue().equals(alg)) {
-               throw new UnsupportedJwtException("JWT Header 'alg' of [" + alg + "] is not supported, only RSA25 signatures are supported");
+           if(!"RS256".equals(alg)) {
+               throw new UnsupportedJwtException("JWT Header 'alg' of [" + alg + "] is not supported, only RSA256 signatures are supported");
            }
 
            claimsValidator.validateClaims(jws);
