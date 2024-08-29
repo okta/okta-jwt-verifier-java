@@ -90,15 +90,15 @@ abstract class TokenVerifierTestSupport {
                 .issuer(TEST_ISSUER)
                 .issuedAt(Date.from(now))
                 .notBefore(Date.from(now))
+                .header().add("kid", TEST_PUB_KEY_ID).and()
                 .expiration(Date.from(now.plus(1L, ChronoUnit.HOURS)))
-                .setHeaderParam("kid", TEST_PUB_KEY_ID)
     }
 
     @Test
     void missingIssuerClaim() {
         expect JwtVerificationException, {
             buildThenDecodeToken(baseJwtBuilder()
-                    .setIssuer(null))
+                    .issuer(null))
         }
     }
 
@@ -160,13 +160,13 @@ abstract class TokenVerifierTestSupport {
     void jkuNotUsedTest() {
 
         def signingKeyResolver = mock(SigningKeyResolver)
-        when(signingKeyResolver.resolveSigningKey(any(Header), any(Claims))).thenReturn(TEST_KEY_PAIR.getPublic())
+        when(signingKeyResolver.resolveSigningKey(any(Header) as JwsHeader, any(Claims))).thenReturn(TEST_KEY_PAIR.getPublic())
 
         def jwtBuilder = baseJwtBuilder()
             .setHeaderParam("jku", "http://example.com")
 
         assertThat buildThenDecodeToken(jwtBuilder, signingKeyResolver), notNullValue()
-        verify(signingKeyResolver).resolveSigningKey(any(Header), any(Claims))
+        verify(signingKeyResolver).resolveSigningKey(any(Header) as JwsHeader, any(Claims))
         verifyNoMoreInteractions(signingKeyResolver)
     }
 
@@ -207,7 +207,7 @@ abstract class TokenVerifierTestSupport {
         Instant now = Instant.now()
         expect JwtVerificationException, {
             buildThenDecodeToken(baseJwtBuilder()
-                    .setExpiration(Date.from(now.minus(10L, ChronoUnit.SECONDS))))
+                    .expiration(Date.from(now.minus(10L, ChronoUnit.SECONDS))))
         }
     }
 
@@ -215,7 +215,7 @@ abstract class TokenVerifierTestSupport {
     void expiredUnderLeeway() {
         Instant now = Instant.now()
         buildThenDecodeToken(baseJwtBuilder()
-                .setExpiration(Date.from(now.minus(8L, ChronoUnit.SECONDS))))
+                .expiration(Date.from(now.minus(8L, ChronoUnit.SECONDS))))
     }
 
 
@@ -224,7 +224,7 @@ abstract class TokenVerifierTestSupport {
         Instant now = Instant.now()
         expect JwtVerificationException, {
             buildThenDecodeToken(baseJwtBuilder()
-                    .setNotBefore(Date.from(now.plus(11L, ChronoUnit.SECONDS))))
+                    .notBefore(Date.from(now.plus(11L, ChronoUnit.SECONDS))))
         }
     }
 
@@ -232,21 +232,21 @@ abstract class TokenVerifierTestSupport {
     void notBeforeUnderLeeway() {
         Instant now = Instant.now()
         buildThenDecodeToken(baseJwtBuilder()
-                .setNotBefore(Date.from(now.minus(9L, ChronoUnit.SECONDS))))
+                .notBefore(Date.from(now.minus(9L, ChronoUnit.SECONDS))))
     }
 
     @Test
     void oktaOrgIssuerMismatch() {
         def orgIssuer = "https://test.example.com"
         String token = baseJwtBuilder()
-            .setIssuer(orgIssuer)
-            .setHeaderParam("kid", "OKTA_ORG_KEY")
+            .issuer(orgIssuer)
+            .header().add("kid", "OKTA_ORG_KEY").and()
             .signWith(ORG_KEY_PAIR.getPrivate(), SignatureAlgorithm.RS256)
             .compact()
 
         def e = expect JwtVerificationException, {decodeToken(token, signingKeyResolver)}
         assertThat e.getMessage(), equalTo("Failed to parse token")
-        assertThat e.cause.getMessage(), equalTo("Expected iss claim to be: ${TEST_ISSUER}, but was: ${orgIssuer}.".toString())
+        assertThat e.cause.getMessage(), equalTo("JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.".toString())
     }
 
     String buildJwtWithFudgedHeader(String headerJson, String body) {
