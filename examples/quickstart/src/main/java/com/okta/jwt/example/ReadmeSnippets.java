@@ -17,6 +17,7 @@ package com.okta.jwt.example;
 
 import com.okta.jwt.AccessTokenVerifier;
 import com.okta.jwt.JwtVerifiers;
+import nl.altindag.ssl.SSLFactory;
 
 import java.time.Duration;
 
@@ -29,12 +30,20 @@ import java.time.Duration;
 public class ReadmeSnippets {
 
     private void basicUsage() {
+
+        // See https://sslcontext-kickstart.com/usage.html for detailed usage options
+        SSLFactory sslFactory = SSLFactory.builder()
+                .withIdentityMaterial("identity.jks", "password".toCharArray())
+                .withTrustMaterial("truststore.jks", "password".toCharArray())
+                .build();
+
         AccessTokenVerifier jwtVerifier = JwtVerifiers.accessTokenVerifierBuilder()
             .setIssuer("https://{yourOktaDomain}/oauth2/default")
             .setAudience("api://default")                   // defaults to 'api://default'
             .setConnectionTimeout(Duration.ofSeconds(1))    // defaults to 1s
             .setRetryMaxAttempts(2)                     // defaults to 2
             .setRetryMaxElapsed(Duration.ofSeconds(10)) // defaults to 10s
+            .setSslFactory(sslFactory)                  // set SSL factory
             .build();
     }
 }

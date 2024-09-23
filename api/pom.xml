@@ -29,6 +29,15 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>io.github.hakky54</groupId>
+            <artifactId>sslcontext-kickstart</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.hakky54</groupId>
+            <artifactId>sslcontext-kickstart-for-pem</artifactId>
+        </dependency>
+
         <!-- test deps -->
         <dependency>
             <groupId>org.hamcrest</groupId>

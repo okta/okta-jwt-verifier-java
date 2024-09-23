@@ -15,6 +15,8 @@
  */
 package com.okta.jwt;
 
+import nl.altindag.ssl.SSLFactory;
+
 import java.time.Clock;
 import java.time.Duration;
 
@@ -106,6 +108,14 @@ public interface VerifierBuilderSupport<B extends VerifierBuilderSupport, R> {
      * @return a reference to the current builder for use in method chaining
      */
     B setClock(Clock clock);
+
+    /**
+     * Sets the {@code sslFactory} the verifier will use for http client.
+     *
+     * @param sslFactory the ssl factory instance to be used by the underlying HTTP client.
+     * @return a reference to the current builder for use in method chaining
+     */
+    B setSslFactory(SSLFactory sslFactory);
 
     /**
      * Sets the {@code preloadSigningKeys} the verifier will use to determine if it needs to prefetch Signing keys into cache at boot time.

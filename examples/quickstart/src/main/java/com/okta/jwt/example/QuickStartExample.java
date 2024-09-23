@@ -34,7 +34,6 @@ public class QuickStartExample {
         String audience  = args[1];
         String jwtString = args[2];
 
-
         // 1. build the parser
         AccessTokenVerifier jwtVerifier = JwtVerifiers.accessTokenVerifierBuilder()
                                     .setIssuer(issuerUrl)
