@@ -32,7 +32,7 @@
     <properties>
         <github.slug>okta/okta-jwt-verifier-java</github.slug>
         <okhttp.version>4.12.0</okhttp.version>
-        <okta.commons.version>2.0.0</okta.commons.version>
+        <okta.commons.version>2.0.1</okta.commons.version>
         <jjwt.version>0.12.6</jjwt.version>
     </properties>
 
@@ -105,6 +105,16 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
                 <version>2.0.20</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.hakky54</groupId>
+                <artifactId>sslcontext-kickstart</artifactId>
+                <version>8.3.7</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.hakky54</groupId>
+                <artifactId>sslcontext-kickstart-for-pem</artifactId>
+                <version>8.3.7</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -22,6 +22,7 @@ import com.okta.jwt.VerifierBuilderSupport;
 import com.okta.jwt.impl.http.HttpClient;
 import com.okta.jwt.impl.http.OktaCommonsHttpClient;
 import io.jsonwebtoken.SigningKeyResolver;
+import nl.altindag.ssl.SSLFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -40,6 +41,7 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
     private String proxyPassword = null;
     private int retryMaxAttempts = 2; /* based on SDK spec */
     private Duration retryMaxElapsed = Duration.ofSeconds(10);
+    private SSLFactory sslFactory;
     private Clock clock = Clock.systemDefaultZone();
     private boolean preloadSigningKeys = false;
 
@@ -145,7 +147,16 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         return self();
     }
 
-   public boolean getPreloadSigningKeys() {
+    public SSLFactory getSslFactory() {
+        return sslFactory;
+    }
+
+    public B setSslFactory(SSLFactory sslFactory) {
+        this.sslFactory = sslFactory;
+        return self();
+    }
+
+    public boolean getPreloadSigningKeys() {
         return preloadSigningKeys;
     }
 
@@ -196,6 +207,7 @@ abstract class BaseVerifierBuilderSupport<B extends VerifierBuilderSupport, R> i
         httpClientConfiguration.setProxyPort(getProxyPort());
         httpClientConfiguration.setProxyUsername(getProxyUsername());
         httpClientConfiguration.setProxyPassword(getProxyPassword());
+        httpClientConfiguration.setSslFactory(getSslFactory());
         return new OktaCommonsHttpClient(httpClientConfiguration);
     }
 
