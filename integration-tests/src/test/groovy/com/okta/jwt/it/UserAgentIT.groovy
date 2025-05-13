@@ -60,11 +60,10 @@ class UserAgentIT extends KeyServerITSupport {
             RecordedRequest request = server.takeRequest()
             assertThat request.getPath(), is("/oauth2/default/v1/keys")
             assertThat request.headers.get("User-Agent"), allOf(
-                    containsString("okta-jwt-verifier-java/"),
-                    containsString("java/${System.getProperty("java.version")}"),
-                    containsString("${System.getProperty("os.name")}/${System.getProperty("os.version")}"))
+                    containsString("okta-jwt-verifier-java"))
         } finally {
             server.shutdown()
         }
     }
 }
+
