@@ -22,20 +22,16 @@ import com.okta.commons.http.RequestExecutor;
 import com.okta.commons.http.RequestExecutorFactory;
 import com.okta.commons.http.Response;
 import com.okta.commons.http.config.HttpClientConfiguration;
-import com.okta.commons.lang.ApplicationInfo;
 import com.okta.commons.lang.Classes;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.stream.Collectors;
 
 import static com.okta.commons.http.HttpHeaders.USER_AGENT;
 
 public class OktaCommonsHttpClient implements HttpClient {
-    private static final String USER_AGENT_VALUE = ApplicationInfo.get().entrySet().stream()
-            .map(entry -> entry.getKey() + "/" + entry.getValue())
-            .collect(Collectors.joining(" "));
+    private static final String USER_AGENT_VALUE = "okta-jwt-verifier-java";
 
     private final RequestExecutor requestExecutor;
 
