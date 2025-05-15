@@ -131,4 +131,8 @@
             </plugins>
         </pluginManagement>
     </build>
+
+  <scm>
+    <tag>okta-jwt-verifier-parent-0.5.12</tag>
+  </scm>
 </project>
