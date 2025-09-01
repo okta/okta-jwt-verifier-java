@@ -114,7 +114,7 @@
             <dependency>
                 <groupId>io.github.hakky54</groupId>
                 <artifactId>sslcontext-kickstart-for-pem</artifactId>
-                <version>9.1.0</version>
+                <version>9.2.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
