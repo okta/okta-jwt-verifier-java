@@ -47,7 +47,7 @@ The Okta JWT Verifier can created via the fluent `JwtVerifiers` class:
  
 [//]: # (method: basicUsage)
 ```java
-// see https://sslcontext-kickstart.com/usage.html for detailed usage options
+// see https://ayza.com/usage.html for detailed usage options
 SSLFactory sslFactory = SSLFactory.builder()
         .withIdentityMaterial("identity.jks", "password".toCharArray())
         .withTrustMaterial("truststore.jks", "password".toCharArray())

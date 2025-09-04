@@ -34,6 +34,7 @@
         <okhttp.version>3.14.9</okhttp.version>
         <okta.commons.version>2.0.1</okta.commons.version>
         <jjwt.version>0.12.6</jjwt.version>
+        <ayza.version>10.0.0</ayza.version>
     </properties>
 
     <modules>
@@ -108,13 +109,13 @@
             </dependency>
             <dependency>
                 <groupId>io.github.hakky54</groupId>
-                <artifactId>sslcontext-kickstart</artifactId>
-                <version>9.1.0</version>
+                <artifactId>ayza</artifactId>
+                <version>${ayza.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.hakky54</groupId>
-                <artifactId>sslcontext-kickstart-for-pem</artifactId>
-                <version>9.1.0</version>
+                <artifactId>ayza-for-pem</artifactId>
+                <version>${ayza.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
