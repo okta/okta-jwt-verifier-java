@@ -31,11 +31,11 @@
 
         <dependency>
             <groupId>io.github.hakky54</groupId>
-            <artifactId>sslcontext-kickstart</artifactId>
+            <artifactId>ayza</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.hakky54</groupId>
-            <artifactId>sslcontext-kickstart-for-pem</artifactId>
+            <artifactId>ayza-for-pem</artifactId>
         </dependency>
 
         <!-- test deps -->
