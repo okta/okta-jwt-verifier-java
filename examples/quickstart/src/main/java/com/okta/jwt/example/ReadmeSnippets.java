@@ -31,7 +31,7 @@ public class ReadmeSnippets {
 
     private void basicUsage() {
 
-        // See https://sslcontext-kickstart.com/usage.html for detailed usage options
+        // See https://ayza.com/usage.html for detailed usage options
         SSLFactory sslFactory = SSLFactory.builder()
                 .withIdentityMaterial("identity.jks", "password".toCharArray())
                 .withTrustMaterial("truststore.jks", "password".toCharArray())
