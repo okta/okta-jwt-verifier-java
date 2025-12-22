@@ -146,6 +146,9 @@ final class RemoteJwkSigningKeyResolver implements SigningKeyResolver {
                     return "HmacSHA384";
                 case "HS512":
                     return "HmacSHA512";
+                default:
+                    // Unknown algorithm, fall through to key-length-based detection
+                    break;
             }
         }
         // Fallback: determine based on key length
