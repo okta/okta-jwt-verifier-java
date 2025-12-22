@@ -92,4 +92,88 @@ class RemoteJwkSigningKeyResolverTest {
         verify(httpClient, times(2)).get(any(URL))
         verifyNoMoreInteractions(httpClient)
     }
+
+    @Test
+    void symmetricKeyHS512Test() {
+
+        def url = new URL("https://keys.example.com")
+        def jwsHeader1 = mock(JwsHeader)
+        def jwsHeader2 = mock(JwsHeader)
+        def httpClient = mock(HttpClient)
+
+        when(httpClient.get(url)).thenReturn(getClass().getResourceAsStream("/http/symmetricKeyTest.json"))
+        when(jwsHeader1.getKeyId()).thenReturn("symmetric-key-one")
+        when(jwsHeader2.getKeyId()).thenReturn("rsa-key-one")
+
+        def underTest = new RemoteJwkSigningKeyResolver(url, httpClient)
+        
+        // Verify symmetric key (HS512)
+        def result = underTest.resolveSigningKey(jwsHeader1, "not.used".getBytes("UTF-8"))
+        assertThat result.getAlgorithm(), is("HmacSHA512")
+
+        // Verify RSA key still works
+        result = underTest.resolveSigningKey(jwsHeader2, "not.used".getBytes("UTF-8"))
+        assertThat result.getAlgorithm(), is("RSA")
+
+        verify(httpClient, times(1)).get(any(URL))
+        verifyNoMoreInteractions(httpClient)
+    }
+
+    @Test
+    void symmetricKeyHS256Test() {
+
+        def url = new URL("https://keys.example.com")
+        def jwsHeader = mock(JwsHeader)
+        def httpClient = mock(HttpClient)
+
+        // Create a JSON with HS256 key inline
+        def jsonContent = '''
+        {
+          "keys": [
+            {
+              "kty": "oct",
+              "alg": "HS256",
+              "kid": "hs256-key",
+              "use": "sig",
+              "k": "AyM32w-QxZP2W1TYZlOJSlnNcKVgaXxD5xFv-VSb0MZ"
+            }
+          ]
+        }
+        '''
+        when(httpClient.get(url)).thenReturn(new ByteArrayInputStream(jsonContent.getBytes("UTF-8")))
+        when(jwsHeader.getKeyId()).thenReturn("hs256-key")
+
+        def underTest = new RemoteJwkSigningKeyResolver(url, httpClient)
+        def result = underTest.resolveSigningKey(jwsHeader, "not.used".getBytes("UTF-8"))
+        assertThat result.getAlgorithm(), is("HmacSHA256")
+    }
+
+    @Test
+    void symmetricKeyHS384Test() {
+
+        def url = new URL("https://keys.example.com")
+        def jwsHeader = mock(JwsHeader)
+        def httpClient = mock(HttpClient)
+
+        // Create a JSON with HS384 key inline
+        def jsonContent = '''
+        {
+          "keys": [
+            {
+              "kty": "oct",
+              "alg": "HS384",
+              "kid": "hs384-key",
+              "use": "sig",
+              "k": "AyM32w-QxZP2W1TYZlOJSlnNcKVgaXxD5xFv-VSb0MZ-dHm9qyG_lh-AZyYl6cAV"
+            }
+          ]
+        }
+        '''
+        when(httpClient.get(url)).thenReturn(new ByteArrayInputStream(jsonContent.getBytes("UTF-8")))
+        when(jwsHeader.getKeyId()).thenReturn("hs384-key")
+
+        def underTest = new RemoteJwkSigningKeyResolver(url, httpClient)
+        def result = underTest.resolveSigningKey(jwsHeader, "not.used".getBytes("UTF-8"))
+        assertThat result.getAlgorithm(), is("HmacSHA384")
+    }
 }

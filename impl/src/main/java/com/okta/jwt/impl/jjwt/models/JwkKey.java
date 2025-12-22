@@ -43,6 +43,9 @@ public class JwkKey {
     @JsonProperty("n")
     private String publicKeyModulus;
 
+    @JsonProperty("k")
+    private String symmetricKey;
+
     public String getKeyType() {
         return keyType;
     }
@@ -97,6 +100,15 @@ public class JwkKey {
         return this;
     }
 
+    public String getSymmetricKey() {
+        return symmetricKey;
+    }
+
+    public JwkKey setSymmetricKey(String symmetricKey) {
+        this.symmetricKey = symmetricKey;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -107,11 +119,12 @@ public class JwkKey {
                 Objects.equals(keyId, jwkKey.keyId) &&
                 Objects.equals(publicKeyUse, jwkKey.publicKeyUse) &&
                 Objects.equals(publicKeyExponent, jwkKey.publicKeyExponent) &&
-                Objects.equals(publicKeyModulus, jwkKey.publicKeyModulus);
+                Objects.equals(publicKeyModulus, jwkKey.publicKeyModulus) &&
+                Objects.equals(symmetricKey, jwkKey.symmetricKey);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(keyType, algorithm, keyId, publicKeyUse, publicKeyExponent, publicKeyModulus);
+        return Objects.hash(keyType, algorithm, keyId, publicKeyUse, publicKeyExponent, publicKeyModulus, symmetricKey);
     }
 }
