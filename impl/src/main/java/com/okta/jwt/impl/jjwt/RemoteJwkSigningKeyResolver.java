@@ -36,7 +36,8 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import javax.crypto.spec.SecretKeySpec;
 
 final class RemoteJwkSigningKeyResolver implements SigningKeyResolver {
 
@@ -85,26 +86,78 @@ final class RemoteJwkSigningKeyResolver implements SigningKeyResolver {
 
     void updateKeys() {
         try {
-            Map<String, Key> newKeys =
-            objectMapper.readValue(httpClient.get(jwkUri), JwkKeys.class).getKeys().stream()
-                .filter(jwkKey -> "sig".equals(jwkKey.getPublicKeyUse()))
-                .filter(jwkKey -> "RSA".equals(jwkKey.getKeyType()))
-                .collect(Collectors.toMap(JwkKey::getKeyId, jwkKey -> {
-                    BigInteger modulus = base64ToBigInteger(jwkKey.getPublicKeyModulus());
-                    BigInteger exponent = base64ToBigInteger(jwkKey.getPublicKeyExponent());
-                    RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(modulus, exponent);
-                    try {
-                        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-                        return keyFactory.generatePublic(rsaPublicKeySpec);
-                    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-                        throw new IllegalStateException("Failed to parse public key");
-                    }
-               }));
+            Map<String, Key> newKeys = new HashMap<>();
+            for (JwkKey jwkKey : objectMapper.readValue(httpClient.get(jwkUri), JwkKeys.class).getKeys()) {
+                if (!"sig".equals(jwkKey.getPublicKeyUse())) {
+                    continue;
+                }
+
+                Key key = null;
+                String keyType = jwkKey.getKeyType();
+
+                if ("RSA".equals(keyType)) {
+                    key = parseRsaKey(jwkKey);
+                } else if ("oct".equals(keyType)) {
+                    key = parseSymmetricKey(jwkKey);
+                }
+
+                if (key != null && jwkKey.getKeyId() != null) {
+                    newKeys.put(jwkKey.getKeyId(), key);
+                }
+            }
 
             keyMap = Collections.unmodifiableMap(newKeys);
 
         } catch (IOException e) {
             throw new JwtException("Failed to fetch keys from URL: " + jwkUri, e);
+        }
+    }
+
+    private Key parseRsaKey(JwkKey jwkKey) {
+        BigInteger modulus = base64ToBigInteger(jwkKey.getPublicKeyModulus());
+        BigInteger exponent = base64ToBigInteger(jwkKey.getPublicKeyExponent());
+        RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(modulus, exponent);
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePublic(rsaPublicKeySpec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new IllegalStateException("Failed to parse RSA public key", e);
+        }
+    }
+
+    private Key parseSymmetricKey(JwkKey jwkKey) {
+        String k = jwkKey.getSymmetricKey();
+        if (k == null) {
+            throw new IllegalStateException("Symmetric key 'k' value is missing");
+        }
+        byte[] keyBytes = Decoders.BASE64URL.decode(k);
+        // Determine algorithm based on key length or algorithm hint
+        String algorithm = determineHmacAlgorithm(jwkKey.getAlgorithm(), keyBytes.length);
+        return new SecretKeySpec(keyBytes, algorithm);
+    }
+
+    private String determineHmacAlgorithm(String alg, int keyLength) {
+        // If algorithm is specified in the JWK, use it to determine the HMAC algorithm
+        if (alg != null) {
+            switch (alg) {
+                case "HS256":
+                    return "HmacSHA256";
+                case "HS384":
+                    return "HmacSHA384";
+                case "HS512":
+                    return "HmacSHA512";
+                default:
+                    // Unknown algorithm, fall through to key-length-based detection
+                    break;
+            }
+        }
+        // Fallback: determine based on key length
+        if (keyLength >= 64) {
+            return "HmacSHA512";
+        } else if (keyLength >= 48) {
+            return "HmacSHA384";
+        } else {
+            return "HmacSHA256";
         }
     }
 
