@@ -25,13 +25,13 @@
 
     <groupId>com.okta.jwt</groupId>
     <artifactId>okta-jwt-verifier-parent</artifactId>
-    <version>0.5.13-SNAPSHOT</version>
+    <version>0.5.13</version>
     <name>Okta JWT Verifier :: Parent</name>
     <packaging>pom</packaging>
 
     <properties>
         <github.slug>okta/okta-jwt-verifier-java</github.slug>
-        <okhttp.version>3.14.9</okhttp.version>
+        <okhttp.version>4.12.0</okhttp.version>
         <okta.commons.version>2.0.1</okta.commons.version>
         <jjwt.version>0.12.6</jjwt.version>
     </properties>
@@ -58,17 +58,17 @@
             <dependency>
                 <groupId>com.okta.jwt</groupId>
                 <artifactId>okta-jwt-verifier</artifactId>
-                <version>0.5.13-SNAPSHOT</version>
+                <version>0.5.13</version>
             </dependency>
             <dependency>
                 <groupId>com.okta.jwt</groupId>
                 <artifactId>okta-jwt-verifier-impl</artifactId>
-                <version>0.5.13-SNAPSHOT</version>
+                <version>0.5.13</version>
             </dependency>
             <dependency>
                 <groupId>com.okta.jwt</groupId>
                 <artifactId>okta-jwt-verifier-integration-tests</artifactId>
-                <version>0.5.13-SNAPSHOT</version>
+                <version>0.5.13</version>
             </dependency>
 
             <dependency>
@@ -138,6 +138,6 @@
     </build>
 
   <scm>
-    <tag>okta-jwt-verifier-parent-0.5.12</tag>
+    <tag>okta-jwt-verifier-parent-0.5.13</tag>
   </scm>
 </project>
