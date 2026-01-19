@@ -35,6 +35,11 @@
             <username>${env.OSSI_USERNAME}</username>
             <password>${env.OSSI_TOKEN}</password>
         </server>
+        <server>
+            <id>ossrh</id>
+            <username>r1xA0h</username>
+            <password>5AXTdid5leHEfiyUwjjMHeJxelrSit9cN</password>
+        </server>
     </servers>
     <profiles>
         <profile>
