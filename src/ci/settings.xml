@@ -22,13 +22,13 @@
         </server>
         <server>
             <id>sonatype-nexus-snapshots</id>
-            <username>r1xA0h</username>
-            <password>5AXTdid5leHEfiyUwjjMHeJxelrSit9cN</password>
+            <username>${env.OSSRH_USERNAME}</username>
+            <password>${env.OSSRH_SECRET}</password>
         </server>
         <server>
             <id>sonatype-nexus-staging</id>
-            <username>r1xA0h</username>
-            <password>5AXTdid5leHEfiyUwjjMHeJxelrSit9cN</password>
+            <username>${env.OSSRH_USERNAME}</username>
+            <password>${env.OSSRH_SECRET}</password>
         </server>
         <server>
             <id>ossi</id>
@@ -37,8 +37,8 @@
         </server>
         <server>
             <id>ossrh</id>
-            <username>r1xA0h</username>
-            <password>5AXTdid5leHEfiyUwjjMHeJxelrSit9cN</password>
+            <username>${env.OSSRH_USERNAME}</username>
+            <password>${env.OSSRH_SECRET}</password>
         </server>
     </servers>
     <profiles>
