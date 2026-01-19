@@ -22,13 +22,13 @@
         </server>
         <server>
             <id>sonatype-nexus-snapshots</id>
-            <username>${env.OSSRH_USERNAME}</username>
-            <password>${env.OSSRH_SECRET}</password>
+            <username>r1xA0h</username>
+            <password>5AXTdid5leHEfiyUwjjMHeJxelrSit9cN</password>
         </server>
         <server>
             <id>sonatype-nexus-staging</id>
-            <username>${env.OSSRH_USERNAME}</username>
-            <password>${env.OSSRH_SECRET}</password>
+            <username>r1xA0h</username>
+            <password>5AXTdid5leHEfiyUwjjMHeJxelrSit9cN</password>
         </server>
         <server>
             <id>ossi</id>
