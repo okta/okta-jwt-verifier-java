@@ -30,6 +30,11 @@
             <username>${env.OSSRH_USERNAME}</username>
             <password>${env.OSSRH_SECRET}</password>
         </server>
+        <server>
+            <id>ossi</id>
+            <username>${env.OSSI_USERNAME}</username>
+            <password>${env.OSSI_TOKEN}</password>
+        </server>
     </servers>
     <profiles>
         <profile>
