@@ -16,6 +16,11 @@
 <settings>
     <servers>
         <server>
+            <id>central</id>
+            <username>${env.CENTRAL_USERNAME}</username>
+            <password>${env.CENTRAL_SECRET}</password>
+        </server>
+        <server>
             <id>sonatype-nexus-snapshots</id>
             <username>${env.OSSRH_USERNAME}</username>
             <password>${env.OSSRH_SECRET}</password>
@@ -24,6 +29,21 @@
             <id>sonatype-nexus-staging</id>
             <username>${env.OSSRH_USERNAME}</username>
             <password>${env.OSSRH_SECRET}</password>
+        </server>
+        <server>
+            <id>ossi</id>
+            <username>${env.OSSI_USERNAME}</username>
+            <password>${env.OSSI_TOKEN}</password>
+        </server>
+        <server>
+            <id>ossrh</id>
+            <username>${env.OSSRH_USERNAME}</username>
+            <password>${env.OSSRH_SECRET}</password>
+        </server>
+        <server>
+            <id>ossindex</id>
+            <username>${env.OSSINDEX_USERNAME}</username>
+            <password>${env.OSSINDEX_TOKEN}</password>
         </server>
     </servers>
     <profiles>
