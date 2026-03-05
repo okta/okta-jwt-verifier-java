@@ -63,7 +63,6 @@ abstract class TokenVerifierSupport {
                             .build();
                     return keyResolver.resolveSigningKey((JwsHeader) header, claims);
                 })
-                .requireIssuer(issuer)
                 .clockSkewSeconds(leeway.getSeconds())
                 .clock(jwtClock)
                 .build();
@@ -76,7 +75,10 @@ abstract class TokenVerifierSupport {
         }
 
         try {
-            Jws<Claims> jwt = parser.parse(token, new OktaJwtHandler(claimsValidator));
+            ClaimsValidator fullValidator = ClaimsValidator.compositeClaimsValidator(
+                    new ClaimsValidator.IssuerClaimsValidator(issuer),
+                    claimsValidator);
+            Jws<Claims> jwt = parser.parse(token, new OktaJwtHandler(fullValidator));
             return new DefaultJwt(token,
                     jwt.getPayload().getIssuedAt().toInstant(),
                     jwt.getPayload().getExpiration().toInstant(),
