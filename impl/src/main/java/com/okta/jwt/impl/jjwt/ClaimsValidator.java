@@ -61,11 +61,35 @@ interface ClaimsValidator {
 
         @Override
         public void validateClaims(Jws<Claims> jws) {
-            Object actual = jws.getBody().get("aud");
+            Object actual = jws.getPayload().get("aud");
             if (!(actual instanceof Collection && ((Collection<?>) actual).contains(expectedAudience)
                 || actual instanceof String && actual.equals(expectedAudience))) {
-                throw new IncorrectClaimException(jws.getHeader(), jws.getBody(), "aud", actual, "Claim `aud` was invalid, it did not contain the expected value of: "+ expectedAudience);
+                throw new IncorrectClaimException(jws.getHeader(), jws.getPayload(), "aud", actual, "Claim `aud` was invalid, it did not contain the expected value of: "+ expectedAudience);
             }
+        }
+    }
+
+    final class IssuerClaimsValidator implements ClaimsValidator {
+
+        private final String expectedIssuer;
+
+        IssuerClaimsValidator(String expectedIssuer) {
+            Assert.notNull(expectedIssuer, "expectedIssuer cannot be null");
+            this.expectedIssuer = expectedIssuer;
+        }
+
+        @Override
+        public void validateClaims(Jws<Claims> jws) {
+            String actualIssuer = jws.getPayload().getIssuer();
+            if (!normalizeIssuer(expectedIssuer).equals(normalizeIssuer(actualIssuer))) {
+                String msg = String.format("Expected %s claim to be: %s, but was: %s.",
+                        Claims.ISSUER, expectedIssuer, actualIssuer);
+                throw new IncorrectClaimException(jws.getHeader(), jws.getPayload(), Claims.ISSUER, actualIssuer, msg);
+            }
+        }
+
+        private static String normalizeIssuer(String issuer) {
+            return issuer != null ? issuer.replaceAll("/$", "") : "";
         }
     }
 }

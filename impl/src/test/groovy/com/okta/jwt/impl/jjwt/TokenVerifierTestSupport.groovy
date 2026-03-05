@@ -102,6 +102,16 @@ abstract class TokenVerifierTestSupport {
         }
     }
 
+    @Test
+    void issuerWithTrailingSlashTest() {
+        // A token whose iss claim ends with '/' must be accepted when the configured issuer
+        // has no trailing slash (and vice-versa).  Trailing slashes are normalised before
+        // comparison so that Auth0-style issuers (which always include the slash) work out
+        // of the box. See https://github.com/okta/okta-jwt-verifier-java/issues/143
+        buildThenDecodeToken(baseJwtBuilder()
+                .issuer(TEST_ISSUER + "/"))
+    }
+
     @Test(dataProvider = "invalidIssuers")
     void invalidIssuersTest(Object issuer) {
         expect JwtVerificationException, {
@@ -270,7 +280,6 @@ abstract class TokenVerifierTestSupport {
     @DataProvider(name = "invalidIssuers")
     Object[][] invalidIssuers() {
         return [
-                [TEST_ISSUER + "/"],
                 [TEST_ISSUER + "/other-path"],
                 ["https://Test.Example.com/Issuer"],
         ]
